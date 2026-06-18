@@ -1,113 +1,85 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+// Assets/Scripts/Managers/GameManager.cs
+using UnityEngine;
+using System;
 
-public enum GameState { Menu, Playing, GameOver }
+public enum GameState
+{
+    Start,
+    Playing,
+    GameOver
+}
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
-    public GameState State;
+    public GameState CurrentState { get; private set; } = GameState.Start;
+    public int Score { get; private set; }
+    public int EnemiesKilled { get; private set; }
+    public float TimeSurvived { get; private set; }
 
-    [Header("UI")]
-    public GameObject menuUI;
-    public GameObject gameUI;
-    public GameObject gameOverUI;
+    [Header("Game Settings")]
+    [SerializeField] private float gameDuration = 60f;
+    private float timeRemaining;
 
-    [Header("Timer")]
-    public float gameTime = 120f;
-    float timer;
-    bool running;
+    public event Action<GameState> OnStateChanged;
+    public event Action<int> OnScoreChanged;
+    public event Action<int> OnEnemiesKilledChanged;
+    public event Action<float> OnTimeUpdated;
 
-    [Header("Systems")]
-    public EnemySpawner enemySpawner;   // 🔥 NEW
-
-    bool gameEnded;
-
-    private void Awake()
+    void Awake()
     {
-        Instance = this;
-    }
-
-    void Start()
-    {
-        SetState(GameState.Menu);
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     void Update()
     {
-        if (!running || gameEnded) return;
-
-        timer -= Time.deltaTime;
-
-        if (timer <= 0)
+        if (CurrentState == GameState.Playing)
         {
-            GameOver(false); // time out = lose
+            timeRemaining -= Time.deltaTime;
+            TimeSurvived += Time.deltaTime;
+            OnTimeUpdated?.Invoke(timeRemaining);
+
+            if (timeRemaining <= 0)
+                GameOver();
         }
     }
 
-    // ---------------- STATE ----------------
-
-    public void SetState(GameState state)
+    public void StartGame()
     {
-        State = state;
-
-        menuUI.SetActive(state == GameState.Menu);
-        gameUI.SetActive(state == GameState.Playing);
-        gameOverUI.SetActive(state == GameState.GameOver);
-
-        if (state == GameState.Playing)
-            StartGame();
+        ResetGame();
+        CurrentState = GameState.Playing;
+        OnStateChanged?.Invoke(CurrentState);
     }
 
-    // ---------------- GAME FLOW ----------------
-
-    void StartGame()
+    public void GameOver()
     {
-        timer = gameTime;
-        running = true;
-        gameEnded = false;
-
-        ScoreManager.Instance.ResetScore();
-
-        if (enemySpawner != null)
-            enemySpawner.StartSpawning();
+        CurrentState = GameState.GameOver;
+        OnStateChanged?.Invoke(CurrentState);
+        LeaderboardManager.Instance.AddScore(Score, EnemiesKilled, TimeSurvived);
     }
 
-    public void GameOver(bool win)
+    void ResetGame()
     {
-        if (gameEnded) return;
-
-        gameEnded = true;
-        running = false;
-
-        Debug.Log(win ? "YOU WIN" : "YOU LOSE");
-
-        if (enemySpawner != null)
-            enemySpawner.StopSpawning();
-
-        SetState(GameState.GameOver);
-
-        // OPTIONAL (leaderboard hook later)
-        //Leaderboard.Instance.SaveScore(ScoreManager.Instance.score);
+        Score = 0;
+        EnemiesKilled = 0;
+        TimeSurvived = 0;
+        timeRemaining = gameDuration;
     }
 
-    // ---------------- UI BUTTONS ----------------
-
-    public void Restart()
+    public void AddScore(int amount)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Score += amount;
+        OnScoreChanged?.Invoke(Score);
     }
 
-    public void GoToMenu()
+    public void AddKill()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    // ---------------- TIMER ACCESS ----------------
-
-    public float GetTimeRemaining()
-    {
-        return timer;
+        EnemiesKilled++;
+        OnEnemiesKilledChanged?.Invoke(EnemiesKilled);
     }
 }
