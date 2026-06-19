@@ -34,8 +34,14 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Try to damage anything with Health
-        Health health = collision.collider.GetComponent<Health>();
+        BaseEnemy enemy = collision.collider.GetComponentInParent<BaseEnemy>();
+
+        if (enemy != null)
+        {
+            enemy.TakeDamage(damage);
+        }
+
+        Health health = collision.collider.GetComponentInParent<Health>();
 
         if (health != null)
         {

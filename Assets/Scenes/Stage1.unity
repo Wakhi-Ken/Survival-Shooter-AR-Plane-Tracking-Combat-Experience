@@ -1266,7 +1266,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5998ecc1254ff443b9d871324c527c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MedkitPickup
-  healAmount: 10
 --- !u!65 &381529287
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7718,7 +7717,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d32d2008e4c298049b241c187ee84b1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletPool
-  bulletPrefab: {fileID: 5771340632563212089, guid: 8d0009db26d93c34cb7d0ba585f42d8d, type: 3}
+  bulletPrefab: {fileID: 2295239274706826447, guid: eb73acd3d79d87e4d9ab464db6d7f78c, type: 3}
   poolSize: 20
 --- !u!1001 &1005702181
 PrefabInstance:
@@ -8771,7 +8770,7 @@ MonoBehaviour:
   stopDistance: 10
   fireRate: 1.2
   damage: 10
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 2754263670504541047, guid: 075c17b0a5a287848b26452b4dae4e52, type: 3}
   shootPoint: {fileID: 1493782156}
   bulletSpeed: 15
 --- !u!1001 &1094744719
@@ -8940,7 +8939,7 @@ MonoBehaviour:
   meleeDamage: 25
   meleeCooldown: 2
   shootCooldown: 1.2
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 5622383220869598623, guid: 6626da29f52057744946d844839b0b52, type: 3}
   shootPoint: {fileID: 1254299281}
   bulletSpeed: 20
 --- !u!54 &1124743221
@@ -85650,19 +85649,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1438851246719566906, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -385.1035
       objectReference: {fileID: 0}
     - target: {fileID: 1438851246719566906, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -741.9661
       objectReference: {fileID: 0}
     - target: {fileID: 1438851246719566906, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 26
+      value: -120.6012
       objectReference: {fileID: 0}
     - target: {fileID: 1438851246719566906, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -135
+      value: 147.45169
       objectReference: {fileID: 0}
     - target: {fileID: 1565239860221088091, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_text
@@ -85818,19 +85817,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3694930317696740789, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -319.4993
       objectReference: {fileID: 0}
     - target: {fileID: 3694930317696740789, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -738.4653
       objectReference: {fileID: 0}
     - target: {fileID: 3694930317696740789, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 5
+      value: -98.59816
       objectReference: {fileID: 0}
     - target: {fileID: 3694930317696740789, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 10
+      value: 249.44867
       objectReference: {fileID: 0}
     - target: {fileID: 5470375378903540995, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchorMax.x
@@ -85850,19 +85849,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5470375378903540995, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -355.669
       objectReference: {fileID: 0}
     - target: {fileID: 5470375378903540995, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -759.5642
       objectReference: {fileID: 0}
     - target: {fileID: 5470375378903540995, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 10
+      value: -105.32631
       objectReference: {fileID: 0}
     - target: {fileID: 5470375378903540995, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -60
+      value: 186.29002
       objectReference: {fileID: 0}
     - target: {fileID: 5681544176216703863, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_AnchoredPosition.y
