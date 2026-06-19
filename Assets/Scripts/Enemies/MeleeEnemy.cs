@@ -2,12 +2,13 @@
 
 public class MeleeEnemy : BaseEnemy
 {
+    [Header("Movement")]
     public float moveSpeed = 2f;
-    public float attackRange = 1.5f;
+    public float stopDistance = 1.5f;
 
     [Header("Attack")]
     public int damage = 10;
-    public float attackCooldown = 0.1f; // 10 attacks per second
+    public float attackCooldown = 1f;
 
     private Transform player;
     private float lastAttackTime;
@@ -24,12 +25,10 @@ public class MeleeEnemy : BaseEnemy
     {
         if (player == null) return;
 
-        float distance = Vector3.Distance(
-            transform.position,
-            player.position
-        );
+        float distance =
+            Vector3.Distance(transform.position, player.position);
 
-        if (distance > attackRange)
+        if (distance > stopDistance)
         {
             transform.position = Vector3.MoveTowards(
                 transform.position,
@@ -50,7 +49,8 @@ public class MeleeEnemy : BaseEnemy
 
         lastAttackTime = Time.time;
 
-        Health playerHealth = player.GetComponent<Health>();
+        Health playerHealth =
+            player.GetComponent<Health>();
 
         if (playerHealth != null)
         {

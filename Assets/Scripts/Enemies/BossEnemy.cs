@@ -3,8 +3,8 @@
 public class BossEnemy : BaseEnemy
 {
     [Header("Movement")]
-    public float moveSpeed = 1.2f;
-    public float strafeSpeed = 2f;
+    public float moveSpeed = 3f;
+    public float strafeSpeed = 2.5f;
 
     [Header("Ranges")]
     public float meleeRange = 2f;
@@ -14,15 +14,15 @@ public class BossEnemy : BaseEnemy
     public float meleeCooldown = 2f;
 
     [Header("Shooting")]
-    public float shootCooldown = 1.2f;
     public GameObject bulletPrefab;
     public Transform shootPoint;
     public float bulletSpeed = 20f;
+    public float shootCooldown = 0.8f;
 
     private Transform player;
 
-    private float lastMeleeTime;
     private float lastShootTime;
+    private float lastMeleeTime;
 
     protected override void Start()
     {
@@ -36,36 +36,52 @@ public class BossEnemy : BaseEnemy
     {
         if (player == null) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        FacePlayer();
 
-        if (distance > meleeRange)
-        {
-            MoveBoss();
-            Shoot();
-        }
-        else
+        float distance =
+            Vector3.Distance(transform.position, player.position);
+
+        MoveForwardAndStrafe();
+        Shoot();
+
+        if (distance <= meleeRange)
         {
             MeleeAttack();
         }
     }
 
-    // 👑 movement
-    void MoveBoss()
+    // ---------------- LOOK AT PLAYER ----------------
+
+    void FacePlayer()
     {
-        Vector3 direction =
+        Vector3 dir = player.position - transform.position;
+        dir.y = 0;
+
+        if (dir.sqrMagnitude > 0.01f)
+            transform.rotation = Quaternion.LookRotation(dir);
+    }
+
+    // ---------------- SIMPLE MOVEMENT ----------------
+
+    void MoveForwardAndStrafe()
+    {
+        Vector3 forward =
             (player.position - transform.position).normalized;
 
-        Vector3 strafeDirection =
-            Vector3.Cross(direction, Vector3.up);
+        Vector3 right =
+            Vector3.Cross(forward, Vector3.up);
+
+        float strafe = Mathf.Sin(Time.time * 2f);
 
         Vector3 move =
-            direction * moveSpeed +
-            strafeDirection * Mathf.Sin(Time.time * 2f) * strafeSpeed;
+            forward * moveSpeed +
+            right * strafe * strafeSpeed;
 
         transform.position += move * Time.deltaTime;
     }
 
-    // 🔫 shooting
+    // ---------------- SHOOTING ----------------
+
     void Shoot()
     {
         if (Time.time < lastShootTime + shootCooldown)
@@ -75,8 +91,6 @@ public class BossEnemy : BaseEnemy
 
         if (bulletPrefab == null || shootPoint == null)
             return;
-
-        shootPoint.LookAt(player);
 
         GameObject bullet = Instantiate(
             bulletPrefab,
@@ -97,7 +111,8 @@ public class BossEnemy : BaseEnemy
         Destroy(bullet, 5f);
     }
 
-    // 👊 melee
+    // ---------------- MELEE ----------------
+
     void MeleeAttack()
     {
         if (Time.time < lastMeleeTime + meleeCooldown)
@@ -105,24 +120,12 @@ public class BossEnemy : BaseEnemy
 
         lastMeleeTime = Time.time;
 
-        Health playerHealth = player.GetComponent<Health>();
+        Health playerHealth =
+            player.GetComponent<Health>();
 
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(meleeDamage);
         }
-    }
-
-    // ---------------- IMPORTANT ADDITION ----------------
-
-    protected override void Die()
-    {
-        // 🔥 WIN CONDITION TRIGGER
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.GameWon();
-        }
-
-        base.Die();
     }
 }
