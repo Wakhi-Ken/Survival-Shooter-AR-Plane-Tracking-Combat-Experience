@@ -2,20 +2,23 @@
 
 public class ShooterEnemy : BaseEnemy
 {
+    [Header("Movement")]
     public float moveSpeed = 2f;
-    public float shootRange = 6f;
     public float stopDistance = 4f;
-    public float fireRate = 1.2f;
 
-    public Transform shootPoint;
+    [Header("Shooting")]
+    public float fireRate = 1.2f;
     public int damage = 10;
+    public GameObject bulletPrefab;
+    public Transform shootPoint;
+    public float bulletSpeed = 15f;
 
     private Transform player;
     private float lastShotTime;
 
     protected override void Start()
     {
-        maxHealth = 120;   // 👈 SHOOTER HEALTH
+        maxHealth = 120;
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -25,7 +28,10 @@ public class ShooterEnemy : BaseEnemy
     {
         if (player == null) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(
+            transform.position,
+            player.position
+        );
 
         if (distance > stopDistance)
         {
@@ -48,14 +54,22 @@ public class ShooterEnemy : BaseEnemy
 
         lastShotTime = Time.time;
 
-        Debug.Log("Shooter enemy shoots player");
+        GameObject bullet = Instantiate(
+            bulletPrefab,
+            shootPoint.position,
+            Quaternion.identity
+        );
 
-        // later we will use OBJECT POOLING for enemy bullets here
-        Health playerHealth = player.GetComponent<Health>();
+        Vector3 direction =
+            (player.position - shootPoint.position).normalized;
 
-        if (playerHealth != null)
+        Rigidbody rb = bullet.GetComponent<Rigidbody>();
+
+        if (rb != null)
         {
-            playerHealth.TakeDamage(damage);
+            rb.linearVelocity = direction * bulletSpeed;
         }
+
+        Destroy(bullet, 5f);
     }
 }

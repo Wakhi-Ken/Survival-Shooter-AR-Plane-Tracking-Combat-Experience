@@ -912,6 +912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 150
+  healthSlider: {fileID: 1984031900}
 --- !u!65 &282582005
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1751,7 +1752,6 @@ GameObject:
   - component: {fileID: 496537926}
   - component: {fileID: 496537925}
   - component: {fileID: 496537924}
-  - component: {fileID: 496537930}
   m_Layer: 0
   m_Name: Melee
   m_TagString: Untagged
@@ -1898,19 +1898,6 @@ Transform:
   - {fileID: 782249073}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &496537930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 496537923}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5180efe01e4c4224292becd36e0b1d4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHealth: 100
 --- !u!1001 &528198609
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8781,11 +8768,12 @@ MonoBehaviour:
   maxHealth: 100
   scoreValue: 10
   moveSpeed: 1
-  shootRange: 6
   stopDistance: 10
   fireRate: 1.2
-  shootPoint: {fileID: 1493782156}
   damage: 10
+  bulletPrefab: {fileID: 0}
+  shootPoint: {fileID: 1493782156}
+  bulletSpeed: 15
 --- !u!1001 &1094744719
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8944,6 +8932,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af849dceb4792e8498224ccebf4cd9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
+  maxHealth: 100
+  scoreValue: 10
+  moveSpeed: 1.2
+  strafeSpeed: 2
+  meleeRange: 2
+  meleeDamage: 25
+  meleeCooldown: 2
+  shootCooldown: 1.2
+  bulletPrefab: {fileID: 0}
+  shootPoint: {fileID: 1254299281}
+  bulletSpeed: 20
 --- !u!54 &1124743221
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9113,6 +9112,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   gameDuration: 180
+  winCanvas: {fileID: 124212810}
+  loseCanvas: {fileID: 1240128077}
 --- !u!1 &1240128077 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3116151888259133983, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
@@ -9580,9 +9581,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a844126a9104c24590626bade589ac9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 282582005}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a844126a9104c24590626bade589ac9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 919132148482666306}
     - targetCorrespondingSourceObject: {fileID: -3542885339558904099, guid: 2a844126a9104c24590626bade589ac9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1689639110}
@@ -9958,17 +9956,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5470375378903540995, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
   m_PrefabInstance: {fileID: 8696008491062897675}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1851567551 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2829961082812112330, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
-  m_PrefabInstance: {fileID: 8696008491062897675}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!224 &1869110420 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 38988612310855945, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
@@ -12328,6 +12315,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f277e860ab5c814dab4cddc6ef9df29, type: 3}
+--- !u!114 &1984031900 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5984223216717729, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
+  m_PrefabInstance: {fileID: 8696008491062897675}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1 &1993992475
 GameObject:
   m_ObjectHideFlags: 0
@@ -13172,22 +13170,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 2a844126a9104c24590626bade589ac9, type: 3}
   m_PrefabInstance: {fileID: 1610502672}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &919132148482666306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148482666305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0375738249e887740b76d5863e468848, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MedkitSystem
-  maxMedkits: 3
-  medkits: 2
-  medkitText: {fileID: 1851567551}
-  playerHealth: {fileID: 282582004}
 --- !u!4 &1852576805695106520 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: 2a844126a9104c24590626bade589ac9, type: 3}
@@ -85792,23 +85774,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2831883333508555600, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2831883333508555600, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 919132148482666306}
+      objectReference: {fileID: 282582004}
     - target: {fileID: 2831883333508555600, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2831883333508555600, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: UseMedkit
+      value: Heal
       objectReference: {fileID: 0}
     - target: {fileID: 2831883333508555600, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Medkit, Assembly-CSharp
+      value: Health, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2831883333508555600, guid: eb683afb68280ed4f864abd8cc1f7bb5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
