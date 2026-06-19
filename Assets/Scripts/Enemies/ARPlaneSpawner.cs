@@ -15,14 +15,20 @@ public class ARPlaneSpawner : MonoBehaviour
 
     private List<GameObject> spawnedEnemies = new List<GameObject>();
 
+    private bool bossSpawned = false;
+
     void Start()
     {
         InvokeRepeating(nameof(SpawnEnemy), 2f, spawnInterval);
+
+        // 👑 Boss spawn after 30 seconds
+        Invoke(nameof(SpawnBoss), 30f);
     }
 
     void SpawnEnemy()
     {
-        // ✔ FIX: convert trackables properly
+        if (bossSpawned) return; // optional: stop normal spawns after boss
+
         List<ARPlane> planes = new List<ARPlane>();
 
         foreach (var plane in planeManager.trackables)
@@ -51,6 +57,31 @@ public class ARPlaneSpawner : MonoBehaviour
         spawnedEnemies.Add(enemy);
     }
 
+    void SpawnBoss()
+    {
+        if (bossSpawned) return;
+
+        bossSpawned = true;
+
+        Vector3 spawnPosition = GetSpawnInFrontOfCamera();
+
+        GameObject boss =
+            Instantiate(bossEnemy, spawnPosition, Quaternion.identity);
+
+        spawnedEnemies.Add(boss);
+    }
+
+    Vector3 GetSpawnInFrontOfCamera()
+    {
+        Camera cam = Camera.main;
+
+        Vector3 forward = cam.transform.forward;
+        forward.y = 0;
+        forward.Normalize();
+
+        return cam.transform.position + forward * 3f;
+    }
+
     Vector3 GetRandomPointOnPlane(ARPlane plane)
     {
         Vector2 size = plane.size;
@@ -63,20 +94,19 @@ public class ARPlaneSpawner : MonoBehaviour
             plane.transform.right * x +
             plane.transform.forward * z;
 
-        localPoint.y += 0.05f; // small lift above surface
+        localPoint.y += 0.05f;
 
         return localPoint;
     }
 
     GameObject GetRandomEnemy()
     {
-        int r = Random.Range(0, 3);
+        int r = Random.Range(0, 2); // ONLY melee + shooter
 
         return r switch
         {
             0 => meleeEnemy,
-            1 => shooterEnemy,
-            _ => bossEnemy
+            _ => shooterEnemy
         };
     }
 }
