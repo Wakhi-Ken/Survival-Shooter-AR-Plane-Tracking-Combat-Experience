@@ -13,6 +13,9 @@ public class SimpleGun : MonoBehaviour
     public int magazineSize = 10;
     public float reloadTime = 2f;
 
+    [Header("Animation")]
+    public PlayerAnimationController playerAnimator;
+
     [Header("UI")]
     public TMP_Text ammoText;
     public TMP_Text reloadText;
@@ -35,6 +38,12 @@ public class SimpleGun : MonoBehaviour
         if (isReloading)
             return;
 
+        if (shootPoint == null)
+        {
+            Debug.LogWarning("Shoot Point is missing!");
+            return;
+        }
+
         if (bulletsLeft <= 0)
         {
             Debug.Log("Out of ammo!");
@@ -44,7 +53,16 @@ public class SimpleGun : MonoBehaviour
         bulletsLeft--;
         UpdateUI();
 
+        // Play shoot animation
+        if (playerAnimator != null)
+        {
+            playerAnimator.PlayShoot();
+        }
+
         GameObject bullet = BulletPool.Instance.GetBullet();
+
+        if (bullet == null)
+            return;
 
         bullet.transform.position = shootPoint.position;
         bullet.transform.rotation = shootPoint.rotation;
@@ -66,6 +84,12 @@ public class SimpleGun : MonoBehaviour
 
         if (bulletsLeft == magazineSize)
             return;
+
+        // Play reload animation
+        if (playerAnimator != null)
+        {
+            playerAnimator.PlayReload();
+        }
 
         StartCoroutine(ReloadRoutine());
     }
@@ -92,6 +116,8 @@ public class SimpleGun : MonoBehaviour
     void UpdateUI()
     {
         if (ammoText != null)
+        {
             ammoText.text = bulletsLeft + " / " + magazineSize;
+        }
     }
 }

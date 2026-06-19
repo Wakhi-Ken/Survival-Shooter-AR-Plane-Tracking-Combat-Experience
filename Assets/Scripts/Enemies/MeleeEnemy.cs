@@ -4,15 +4,17 @@ public class MeleeEnemy : BaseEnemy
 {
     public float moveSpeed = 2f;
     public float attackRange = 1.5f;
+
+    [Header("Attack")]
     public int damage = 10;
-    public float attackCooldown = 1.5f;
+    public float attackCooldown = 0.1f; // 10 attacks per second
 
     private Transform player;
     private float lastAttackTime;
 
     protected override void Start()
     {
-        maxHealth = 150;   // 👈 MELEE HEALTH
+        maxHealth = 150;
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -22,7 +24,10 @@ public class MeleeEnemy : BaseEnemy
     {
         if (player == null) return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(
+            transform.position,
+            player.position
+        );
 
         if (distance > attackRange)
         {
