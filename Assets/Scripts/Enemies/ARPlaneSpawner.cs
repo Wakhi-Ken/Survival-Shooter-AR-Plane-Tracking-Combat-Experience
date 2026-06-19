@@ -1,17 +1,24 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.ARFoundation;
 
 public class ARPlaneSpawner : MonoBehaviour
 {
-    public ARPlaneManager planeManager;
+    [Header("Game Ground")]
+    public Transform gameGround;
 
+    [Header("Enemy Prefabs")]
     public GameObject meleeEnemy;
     public GameObject shooterEnemy;
     public GameObject bossEnemy;
 
+    [Header("Spawn Settings")]
     public float spawnInterval = 5f;
     public int maxEnemies = 5;
+
+    [Header("Spawn Heights")]
+    public float meleeHeight = 1.2f;
+    public float shooterHeight = 1.2f;
+    public float bossHeight = 1.2f;
 
     private List<GameObject> spawnedEnemies = new List<GameObject>();
 
@@ -21,35 +28,38 @@ public class ARPlaneSpawner : MonoBehaviour
     {
         InvokeRepeating(nameof(SpawnEnemy), 2f, spawnInterval);
 
-        // 👑 Boss spawn after 30 seconds
+        // Spawn boss after 30 seconds
         Invoke(nameof(SpawnBoss), 30f);
     }
 
     void SpawnEnemy()
     {
-        if (bossSpawned) return; // optional: stop normal spawns after boss
-
-        List<ARPlane> planes = new List<ARPlane>();
-
-        foreach (var plane in planeManager.trackables)
-        {
-            planes.Add(plane);
-        }
-
-        if (planes.Count == 0)
+        if (bossSpawned)
             return;
+
+        CleanupDeadEnemies();
 
         if (spawnedEnemies.Count >= maxEnemies)
             return;
 
-        ARPlane randomPlane =
-            planes[Random.Range(0, planes.Count)];
+        if (gameGround == null)
+        {
+            Debug.LogWarning("Game Ground not assigned!");
+            return;
+        }
 
-        Vector3 spawnPosition =
-            GetRandomPointOnPlane(randomPlane);
+        Vector3 spawnPosition = GetRandomPointOnGround();
 
-        GameObject enemyPrefab =
-            GetRandomEnemy();
+        GameObject enemyPrefab = GetRandomEnemy();
+
+        if (enemyPrefab == meleeEnemy)
+        {
+            spawnPosition.y += meleeHeight;
+        }
+        else if (enemyPrefab == shooterEnemy)
+        {
+            spawnPosition.y += shooterHeight;
+        }
 
         GameObject enemy =
             Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
@@ -59,11 +69,13 @@ public class ARPlaneSpawner : MonoBehaviour
 
     void SpawnBoss()
     {
-        if (bossSpawned) return;
+        if (bossSpawned)
+            return;
 
         bossSpawned = true;
 
-        Vector3 spawnPosition = GetSpawnInFrontOfCamera();
+        Vector3 spawnPosition = GetRandomPointOnGround();
+        spawnPosition.y += bossHeight;
 
         GameObject boss =
             Instantiate(bossEnemy, spawnPosition, Quaternion.identity);
@@ -71,42 +83,40 @@ public class ARPlaneSpawner : MonoBehaviour
         spawnedEnemies.Add(boss);
     }
 
-    Vector3 GetSpawnInFrontOfCamera()
+    Vector3 GetRandomPointOnGround()
     {
-        Camera cam = Camera.main;
+        Renderer rend = gameGround.GetComponent<Renderer>();
 
-        Vector3 forward = cam.transform.forward;
-        forward.y = 0;
-        forward.Normalize();
+        if (rend == null)
+        {
+            return gameGround.position;
+        }
 
-        return cam.transform.position + forward * 3f;
-    }
+        Bounds bounds = rend.bounds;
 
-    Vector3 GetRandomPointOnPlane(ARPlane plane)
-    {
-        Vector2 size = plane.size;
+        float x = Random.Range(bounds.min.x, bounds.max.x);
+        float z = Random.Range(bounds.min.z, bounds.max.z);
 
-        float x = Random.Range(-size.x / 2f, size.x / 2f);
-        float z = Random.Range(-size.y / 2f, size.y / 2f);
-
-        Vector3 localPoint =
-            plane.center +
-            plane.transform.right * x +
-            plane.transform.forward * z;
-
-        localPoint.y += 0.05f;
-
-        return localPoint;
+        return new Vector3(
+            x,
+            bounds.max.y,
+            z
+        );
     }
 
     GameObject GetRandomEnemy()
     {
-        int r = Random.Range(0, 2); // ONLY melee + shooter
+        int r = Random.Range(0, 2);
 
         return r switch
         {
             0 => meleeEnemy,
             _ => shooterEnemy
         };
+    }
+
+    void CleanupDeadEnemies()
+    {
+        spawnedEnemies.RemoveAll(enemy => enemy == null);
     }
 }
