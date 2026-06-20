@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class MedKit : MonoBehaviour
 {
-    public int healAmount = 25;
-
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Touched: " + other.name);
@@ -13,9 +11,12 @@ public class MedKit : MonoBehaviour
 
         if (playerHealth != null)
         {
-            Debug.Log("Player collected medkit!");
+            Debug.Log("Medkit collected!");
 
-            playerHealth.Heal(healAmount);
+            if (MedKitInventory.Instance != null)
+            {
+                MedKitInventory.Instance.AddMedKit(1);
+            }
 
             Destroy(gameObject);
         }

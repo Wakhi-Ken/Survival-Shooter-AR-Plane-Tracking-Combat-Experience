@@ -1,48 +1,60 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class MedKitInventory : MonoBehaviour
 {
-    [Header("Medkit Count")]
-    public int medkitCount = 1; // Start with 1 medkit
+    public static MedKitInventory Instance;
+
+    [Header("Inventory")]
+    public int medKitCount = 1; // default 1
 
     [Header("UI")]
-    public TMP_Text medkitText;
+    public TMP_Text medKitText;
 
-    [Header("Heal Settings")]
+    [Header("Healing")]
     public Health playerHealth;
     public int healAmount = 25;
 
+    void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
-        if (playerHealth == null)
-            playerHealth = GetComponent<Health>();
-
         UpdateUI();
     }
 
-    public void AddMedkit(int amount)
+    public void AddMedKit(int amount)
     {
-        medkitCount += amount;
+        medKitCount += amount;
         UpdateUI();
+
+        Debug.Log("Medkits: " + medKitCount);
     }
 
-    public void UseMedkit()
+    public void UseMedKit()
     {
-        if (medkitCount <= 0)
+        if (medKitCount <= 0)
+        {
+            Debug.Log("No medkits left!");
             return;
-
-        medkitCount--;
+        }
 
         if (playerHealth != null)
+        {
+            medKitCount--;
             playerHealth.Heal(healAmount);
 
-        UpdateUI();
+            UpdateUI();
+
+            Debug.Log("Used medkit. Remaining: " + medKitCount);
+        }
     }
 
     void UpdateUI()
     {
-        if (medkitText != null)
-            medkitText.text = "Medkits: " + medkitCount;
+        if (medKitText != null)
+            medKitText.text = medKitCount.ToString();
     }
 }
