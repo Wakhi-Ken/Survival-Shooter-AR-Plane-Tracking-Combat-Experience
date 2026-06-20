@@ -13,8 +13,13 @@ public class ShooterEnemy : BaseEnemy
     public Transform shootPoint;
     public float bulletSpeed = 15f;
 
+    [Header("Animator")]
+    public Animator shooterAnimator;
+
     private Transform player;
     private float lastShotTime;
+
+    private bool isDead = false;
 
     protected override void Start()
     {
@@ -24,24 +29,20 @@ public class ShooterEnemy : BaseEnemy
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (shooterAnimator == null)
+            shooterAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        if (player == null) return;
+        if (isDead || player == null) return;
 
-        float distance = Vector3.Distance(
-            transform.position,
-            player.position
-        );
+        float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance > stopDistance)
         {
-            transform.position = Vector3.MoveTowards(
-                transform.position,
-                player.position,
-                moveSpeed * Time.deltaTime
-            );
+            Move();
         }
         else
         {
@@ -49,12 +50,32 @@ public class ShooterEnemy : BaseEnemy
         }
     }
 
+    // ---------------- MOVE ----------------
+    void Move()
+    {
+        if (shooterAnimator != null)
+            shooterAnimator.SetBool("IsWalking", true);
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            player.position,
+            moveSpeed * Time.deltaTime
+        );
+    }
+
+    // ---------------- SHOOT ----------------
     void Shoot()
     {
+        if (shooterAnimator != null)
+            shooterAnimator.SetBool("IsWalking", false);
+
         if (Time.time < lastShotTime + fireRate)
             return;
 
         lastShotTime = Time.time;
+
+        if (shooterAnimator != null)
+            shooterAnimator.SetTrigger("Shoot");
 
         GameObject bullet = Instantiate(
             bulletPrefab,
@@ -73,5 +94,28 @@ public class ShooterEnemy : BaseEnemy
         }
 
         Destroy(bullet, 5f);
+    }
+
+    // ---------------- DEATH ----------------
+    protected override void Die()
+    {
+        if (isDead) return;
+
+        isDead = true;
+
+        this.enabled = false;
+
+        if (shooterAnimator != null)
+        {
+            shooterAnimator.SetBool("IsWalking", false);
+            shooterAnimator.ResetTrigger("Shoot");
+            shooterAnimator.SetTrigger("Die");
+        }
+
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = false;
+
+        Destroy(gameObject, 2f);
     }
 }
