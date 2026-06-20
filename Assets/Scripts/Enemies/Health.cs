@@ -14,6 +14,8 @@ public class Health : MonoBehaviour
     public PlayerAnimationController playerAnim;
     public SimpleGun gun;
 
+    private bool isDead = false;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -33,6 +35,8 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isDead) return;
+
         currentHealth -= damage;
         UpdateUI();
 
@@ -44,6 +48,8 @@ public class Health : MonoBehaviour
 
     public void Heal(int amount)
     {
+        if (isDead) return;
+
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         UpdateUI();
     }
@@ -56,23 +62,28 @@ public class Health : MonoBehaviour
 
     void Die()
     {
-        // 🔥 play animation first
+        if (isDead) return;
+
+        isDead = true;
+
+        // play animation first
         if (playerAnim != null)
             playerAnim.PlayDie();
 
-        // stop shooting
+        // stop gameplay immediately
         if (gun != null)
             gun.enabled = false;
 
-        // delay game over so animation can play
+        // IMPORTANT: do NOT disable object yet
         Invoke(nameof(TriggerGameOver), 2f);
     }
 
     void TriggerGameOver()
     {
-        gameObject.SetActive(false);
-
         if (GameManager.Instance != null)
             GameManager.Instance.GameOver();
+
+        // disable AFTER GameOver is triggered
+        gameObject.SetActive(false);
     }
 }

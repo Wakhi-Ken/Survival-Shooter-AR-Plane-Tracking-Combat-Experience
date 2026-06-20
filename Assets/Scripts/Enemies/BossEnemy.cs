@@ -117,6 +117,8 @@ public class BossEnemy : BaseEnemy
     // ---------------- DEATH ----------------
     protected override void Die()
     {
+        if (isDead) return;
+
         if (bossAnimator != null)
         {
             bossAnimator.SetBool("IsWalking", false);
@@ -125,6 +127,10 @@ public class BossEnemy : BaseEnemy
             bossAnimator.SetTrigger("Die");
         }
 
-        base.Die(); // ONLY this handles delay + destroy
+        
+        if (GameManager.Instance != null)
+            GameManager.Instance.GameWon();
+
+        base.Die();
     }
 }

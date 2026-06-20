@@ -262,7 +262,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 672256933}
         m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
-        m_MethodName: ResumeGame
+        m_MethodName: ReplayLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8960,7 +8960,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3116151888259133983, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3464935296991153441, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9189,7 +9189,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3116151888259133983, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3464935296991153441, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
       propertyPath: m_AnchorMax.y
@@ -9411,7 +9411,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 672256933}
         m_TargetAssemblyTypeName: MenuControls, Assembly-CSharp
-        m_MethodName: ResumeGame
+        m_MethodName: ReplayLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10270,7 +10270,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1027986564
 Transform:
   m_ObjectHideFlags: 0

@@ -43,7 +43,7 @@ public class BaseEnemy : MonoBehaviour
         Animator anim = GetComponent<Animator>();
         if (anim != null)
         {
-            anim.SetTrigger("Die");
+            //anim.SetTrigger("Die");
             anim.SetBool("IsWalking", false);
         }
 
