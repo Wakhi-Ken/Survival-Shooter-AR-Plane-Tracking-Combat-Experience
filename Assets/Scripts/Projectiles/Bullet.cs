@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
@@ -6,21 +6,22 @@ public class Bullet : MonoBehaviour
     public int damage = 25;
     public float lifeTime = 3f;
 
-
     private Rigidbody rb;
+    private bool hasHit;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
+        hasHit = false;
         CancelInvoke();
 
         if (rb != null)
         {
-            rb.linearVelocity = Vector3.zero; 
+            rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
 
@@ -34,18 +35,23 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        BaseEnemy enemy = collision.collider.GetComponentInParent<BaseEnemy>();
+        if (hasHit) return;
+        hasHit = true;
 
+        // 🎯 PRIORITY 1: Enemy
+        BaseEnemy enemy = collision.collider.GetComponentInParent<BaseEnemy>();
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
+            gameObject.SetActive(false);
+            return;
         }
 
-        Health health = collision.collider.GetComponentInParent<Health>();
-
-        if (health != null)
+        // 🎯 PRIORITY 2: Player
+        Health playerHealth = collision.collider.GetComponentInParent<Health>();
+        if (playerHealth != null)
         {
-            health.TakeDamage(damage);
+            playerHealth.TakeDamage(damage);
         }
 
         gameObject.SetActive(false);
