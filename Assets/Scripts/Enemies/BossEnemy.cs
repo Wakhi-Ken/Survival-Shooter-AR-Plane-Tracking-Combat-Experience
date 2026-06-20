@@ -41,13 +41,12 @@ public class BossEnemy : BaseEnemy
 
     void Update()
     {
-        if (player == null) return;
+        if (isDead || player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
         Move();
-
-        Shoot(); // ALWAYS SHOOT
+        Shoot();
 
         if (distance <= meleeRange)
         {
@@ -58,6 +57,8 @@ public class BossEnemy : BaseEnemy
     // ---------------- MOVE ----------------
     void Move()
     {
+        if (isDead) return;
+
         if (bossAnimator != null)
             bossAnimator.SetBool("IsWalking", true);
 
@@ -110,9 +111,7 @@ public class BossEnemy : BaseEnemy
         Health playerHealth = player.GetComponentInChildren<Health>();
 
         if (playerHealth != null)
-        {
             playerHealth.TakeDamage(meleeDamage);
-        }
     }
 
     // ---------------- DEATH ----------------
@@ -126,12 +125,6 @@ public class BossEnemy : BaseEnemy
             bossAnimator.SetTrigger("Die");
         }
 
-        this.enabled = false;
-
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-            col.enabled = false;
-
-        base.Die(); // ✅ IMPORTANT: updates score + kill count
+        base.Die(); // ONLY this handles delay + destroy
     }
 }

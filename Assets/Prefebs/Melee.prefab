@@ -545,10 +545,11 @@ MonoBehaviour:
   maxHealth: 100
   scoreValue: 10
   moveSpeed: 0.57
+  stopDistance: 1.5
   attackRange: 4
-  attackCooldown: 1.5
   damage: 10
-  animator: {fileID: 8147267066677299936}
+  attackCooldown: 1.5
+  meleeAnimator: {fileID: 8147267066677299936}
 --- !u!114 &3396928006454568965
 MonoBehaviour:
   m_ObjectHideFlags: 0

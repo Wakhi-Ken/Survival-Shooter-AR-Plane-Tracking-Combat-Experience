@@ -1411,7 +1411,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 2754263670504541047, guid: 075c17b0a5a287848b26452b4dae4e52, type: 3}
   shootPoint: {fileID: 8812098884141345444}
   bulletSpeed: 15
-  animator: {fileID: 9215042270464716187}
+  shooterAnimator: {fileID: 9215042270464716187}
 --- !u!114 &4580175742330947124
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,6 +7,8 @@ public class BaseEnemy : MonoBehaviour
 
     public int scoreValue = 10;
 
+    protected bool isDead = false;
+
     protected virtual void Start()
     {
         currentHealth = maxHealth;
@@ -14,6 +16,8 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual void TakeDamage(int damage)
     {
+        if (isDead) return;
+
         currentHealth -= damage;
 
         if (currentHealth <= 0)
@@ -24,12 +28,31 @@ public class BaseEnemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        if (isDead) return;
+        isDead = true;
+
+        Debug.Log("💀 DEAD: " + gameObject.name);
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(scoreValue);
             GameManager.Instance.AddKill();
         }
 
-        Destroy(gameObject);
+        // Try play death animation if exists
+        Animator anim = GetComponent<Animator>();
+        if (anim != null)
+        {
+            anim.SetTrigger("Die");
+            anim.SetBool("IsWalking", false);
+        }
+
+        // stop movement/scripts safely
+        foreach (var c in GetComponents<MonoBehaviour>())
+        {
+            if (c != this) c.enabled = false;
+        }
+
+        Destroy(gameObject, 2.5f);
     }
 }

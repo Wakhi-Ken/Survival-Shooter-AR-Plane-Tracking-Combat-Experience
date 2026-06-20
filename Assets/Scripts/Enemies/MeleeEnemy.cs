@@ -1,48 +1,55 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class MeleeEnemy : BaseEnemy
 {
     public float moveSpeed = 2f;
-    public float attackRange = 3f;
-    public float attackCooldown = 1f;
-    public int damage = 10;
+    public float stopDistance = 1.5f;
 
-    public Animator animator;
+    public float attackRange = 4f;
+    public int damage = 10;
+    public float attackCooldown = 1f;
+
+    public Animator meleeAnimator;
 
     private Transform player;
-    private float lastAttack;
-    private bool isDead;
+    private float lastAttackTime;
 
     protected override void Start()
     {
-        maxHealth = 150;
-        scoreValue = 10;
-
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        animator ??= GetComponent<Animator>();
+
+        if (meleeAnimator == null)
+            meleeAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
         if (isDead || player == null) return;
 
-        float dist = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, player.position);
 
-        if (dist > attackRange)
+        if (distance <= attackRange)
         {
-            Move();
+            Attack();
+
+            if (distance > stopDistance)
+                Move();
         }
         else
         {
-            Attack();
+            Move();
         }
     }
 
     void Move()
     {
-        if (animator) animator.SetBool("IsWalking", true);
+        if (isDead) return;
+
+        if (meleeAnimator != null)
+            meleeAnimator.SetBool("IsWalking", true);
 
         transform.position = Vector3.MoveTowards(
             transform.position,
@@ -53,22 +60,27 @@ public class MeleeEnemy : BaseEnemy
 
     void Attack()
     {
-        if (Time.time < lastAttack + attackCooldown) return;
+        if (Time.time < lastAttackTime + attackCooldown) return;
 
-        lastAttack = Time.time;
+        lastAttackTime = Time.time;
 
-        if (animator) animator.SetTrigger("Attack");
+        if (meleeAnimator != null)
+            meleeAnimator.SetTrigger("Attack");
 
         Health hp = player.GetComponentInChildren<Health>();
         if (hp != null)
             hp.TakeDamage(damage);
     }
 
+    // OPTIONAL: ensures animation state is clean when dying
     protected override void Die()
     {
-        if (isDead) return;
-        isDead = true;
-
         base.Die();
+
+        if (meleeAnimator != null)
+        {
+            meleeAnimator.SetBool("IsWalking", false);
+            meleeAnimator.SetTrigger("Die");
+        }
     }
 }

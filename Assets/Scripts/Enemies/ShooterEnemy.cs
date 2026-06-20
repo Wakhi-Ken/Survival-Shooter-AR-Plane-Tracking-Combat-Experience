@@ -10,21 +10,19 @@ public class ShooterEnemy : BaseEnemy
     public Transform shootPoint;
     public float bulletSpeed = 15f;
 
-    public Animator animator;
+    public Animator shooterAnimator;
 
     private Transform player;
     private float lastShotTime;
-    private bool isDead;
 
     protected override void Start()
     {
-        maxHealth = 120;
-        scoreValue = 20;
-
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        animator ??= GetComponent<Animator>();
+
+        if (shooterAnimator == null)
+            shooterAnimator = GetComponent<Animator>();
     }
 
     void Update()
@@ -41,7 +39,10 @@ public class ShooterEnemy : BaseEnemy
 
     void Move()
     {
-        if (animator) animator.SetBool("IsWalking", true);
+        if (isDead) return;
+
+        if (shooterAnimator != null)
+            shooterAnimator.SetBool("IsWalking", true);
 
         transform.position = Vector3.MoveTowards(
             transform.position,
@@ -52,13 +53,24 @@ public class ShooterEnemy : BaseEnemy
 
     void Shoot()
     {
-        if (Time.time < lastShotTime + fireRate) return;
+        if (isDead) return;
+
+        if (shooterAnimator != null)
+            shooterAnimator.SetBool("IsWalking", false);
+
+        if (Time.time < lastShotTime + fireRate)
+            return;
 
         lastShotTime = Time.time;
 
-        if (animator) animator.SetTrigger("Shoot");
+        if (shooterAnimator != null)
+            shooterAnimator.SetTrigger("Shoot");
 
-        GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
+        GameObject bullet = Instantiate(
+            bulletPrefab,
+            shootPoint.position,
+            Quaternion.identity
+        );
 
         Vector3 dir = (player.position - shootPoint.position).normalized;
 
@@ -67,10 +79,15 @@ public class ShooterEnemy : BaseEnemy
             rb.linearVelocity = dir * bulletSpeed;
     }
 
+    // IMPORTANT: ensure clean animation trigger
     protected override void Die()
     {
-        if (isDead) return;
-        isDead = true;
+        if (shooterAnimator != null)
+        {
+            shooterAnimator.SetBool("IsWalking", false);
+            shooterAnimator.ResetTrigger("Shoot");
+            shooterAnimator.SetTrigger("Die");
+        }
 
         base.Die();
     }
