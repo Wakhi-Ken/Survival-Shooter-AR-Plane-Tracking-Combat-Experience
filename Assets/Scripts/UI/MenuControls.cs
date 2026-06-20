@@ -55,9 +55,18 @@ public class MenuControls : MonoBehaviour
             pauseCanvas.SetActive(false);
     }
 
-    
+    // REPLAY LEVEL
+    public void ReplayLevel()
+    {
+        Time.timeScale = 1f;
+
+        string currentScene = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currentScene);
+    }
+
+
     // MAIN MENU
-    
+
 
     public void ReturnToMainMenu()
     {

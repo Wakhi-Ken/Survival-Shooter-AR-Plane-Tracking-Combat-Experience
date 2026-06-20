@@ -1,6 +1,7 @@
-using UnityEngine;
-using TMPro;
 using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -20,8 +21,7 @@ public class GameManager : MonoBehaviour
     public int EnemiesKilled { get; private set; }
     public float TimeSurvived { get; private set; }
 
-    [Header("Game Settings")]
-    [SerializeField] private float gameDuration = 60f;
+    
 
     private float timeRemaining;
 
@@ -35,6 +35,25 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
 
     public event Action<GameState> OnStateChanged;
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Stage1" || scene.name == "Stage2")
+        {
+            StartGame();
+        }
+    }
+
 
     void Awake()
     {
@@ -64,19 +83,9 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState != GameState.Playing)
             return;
-
-        timeRemaining -= Time.deltaTime;
         TimeSurvived += Time.deltaTime;
-
-        if (timeRemaining < 0)
-            timeRemaining = 0;
-
         UpdateTimerUI();
 
-        if (timeRemaining <= 0)
-        {
-            GameOver();
-        }
     }
 
     // ---------------- GAME FLOW ----------------
@@ -140,8 +149,6 @@ public class GameManager : MonoBehaviour
         EnemiesKilled = 0;
         TimeSurvived = 0f;
 
-        timeRemaining = gameDuration;
-
         UpdateHUD();
         UpdateTimerUI();
     }
@@ -182,16 +189,10 @@ public class GameManager : MonoBehaviour
         if (timerText == null)
             return;
 
-        int minutes =
-            Mathf.FloorToInt(timeRemaining / 60);
+        int minutes = Mathf.FloorToInt(TimeSurvived / 60);
+        int seconds = Mathf.FloorToInt(TimeSurvived % 60);
 
-        int seconds =
-            Mathf.FloorToInt(timeRemaining % 60);
-
-        timerText.text =
-            string.Format("{0:00}:{1:00}",
-            minutes,
-            seconds);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
     void HideAllUI()
