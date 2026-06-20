@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -99,6 +99,8 @@ public class GameManager : MonoBehaviour
 
         ShowLoseUI();
 
+        SaveSession(); // 🔥 ADD THIS
+
         OnStateChanged?.Invoke(CurrentState);
     }
 
@@ -111,6 +113,8 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
 
         ShowWinUI();
+
+        SaveSession(); // 🔥 ADD THIS
 
         OnStateChanged?.Invoke(CurrentState);
     }
@@ -136,6 +140,20 @@ public class GameManager : MonoBehaviour
     {
         EnemiesKilled++;
         UpdateHUD();
+    }
+
+    // ---------------- LEADERBOARD SAVE ----------------
+
+    void SaveSession()
+    {
+        if (LeaderboardManager.Instance != null)
+        {
+            LeaderboardManager.Instance.AddSession(
+                TimeSurvived,
+                EnemiesKilled,
+                Score
+            );
+        }
     }
 
     // ---------------- UI ----------------

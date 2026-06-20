@@ -1,123 +1,75 @@
-using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
-using System;
-
-[System.Serializable]
-public class ScoreEntry
-{
-    public int score;
-    public int enemiesKilled;
-    public float timeSurvived;
-    public string date;
-}
-
-[System.Serializable]
-public class LeaderboardData
-{
-    public List<ScoreEntry> scores = new List<ScoreEntry>();
-}
+using UnityEngine;
 
 public class LeaderboardManager : MonoBehaviour
 {
-    public static LeaderboardManager Instance { get; private set; }
+    public static LeaderboardManager Instance;
 
-    private LeaderboardData data;
-    private string savePath;
+    private const string SAVE_KEY = "LEADERBOARD_DATA";
+
+    public List<SessionData> sessions = new List<SessionData>();
 
     void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+            Load();
+        }
         else
         {
             Destroy(gameObject);
-            return;
         }
-
-        DontDestroyOnLoad(gameObject);
-
-        savePath = Path.Combine(
-            Application.persistentDataPath,
-            "leaderboard.json"
-        );
-
-        LoadScores();
     }
 
-    public void AddScore(
-        int score,
-        int enemiesKilled,
-        float timeSurvived)
+    // ---------------- ADD NEW RUN ----------------
+    public void AddSession(float time, int kills, int score)
     {
-        ScoreEntry entry = new ScoreEntry
+        SessionData data = new SessionData
         {
-            score = score,
-            enemiesKilled = enemiesKilled,
-            timeSurvived = timeSurvived,
-            date = DateTime.Now.ToString("yyyy-MM-dd HH:mm")
+            timeSurvived = time,
+            kills = kills,
+            score = score
         };
 
-        data.scores.Add(entry);
+        sessions.Add(data);
 
-        // Keep ONLY latest 5 sessions
-        while (data.scores.Count > 5)
+        // keep only last 5
+        if (sessions.Count > 5)
+            sessions.RemoveAt(0);
+
+        Save();
+    }
+
+    // ---------------- SAVE ----------------
+    void Save()
+    {
+        string json = JsonUtility.ToJson(new Wrapper(sessions));
+        PlayerPrefs.SetString(SAVE_KEY, json);
+        PlayerPrefs.Save();
+    }
+
+    // ---------------- LOAD ----------------
+    void Load()
+    {
+        if (!PlayerPrefs.HasKey(SAVE_KEY))
+            return;
+
+        string json = PlayerPrefs.GetString(SAVE_KEY);
+        Wrapper wrapper = JsonUtility.FromJson<Wrapper>(json);
+
+        sessions = wrapper.sessions ?? new List<SessionData>();
+    }
+
+    [System.Serializable]
+    private class Wrapper
+    {
+        public List<SessionData> sessions;
+
+        public Wrapper(List<SessionData> sessions)
         {
-            data.scores.RemoveAt(0);
+            this.sessions = sessions;
         }
-
-        SaveScores();
-    }
-
-    // Returns latest sessions
-    public List<ScoreEntry> GetScores()
-    {
-        return data.scores;
-    }
-
-    // Returns highest scores first
-    public List<ScoreEntry> GetTopScores()
-    {
-        List<ScoreEntry> sorted =
-            new List<ScoreEntry>(data.scores);
-
-        sorted.Sort((a, b) =>
-            b.score.CompareTo(a.score));
-
-        return sorted;
-    }
-
-    void SaveScores()
-    {
-        string json =
-            JsonUtility.ToJson(data, true);
-
-        File.WriteAllText(savePath, json);
-    }
-
-    void LoadScores()
-    {
-        if (File.Exists(savePath))
-        {
-            string json =
-                File.ReadAllText(savePath);
-
-            data =
-                JsonUtility.FromJson<LeaderboardData>(json);
-
-            if (data == null)
-                data = new LeaderboardData();
-        }
-        else
-        {
-            data = new LeaderboardData();
-        }
-    }
-
-    // Optional button for testing
-    public void ClearLeaderboard()
-    {
-        data.scores.Clear();
-        SaveScores();
     }
 }
