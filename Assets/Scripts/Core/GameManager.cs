@@ -1,5 +1,5 @@
-// Assets/Scripts/Managers/GameManager.cs
 using UnityEngine;
+using TMPro;
 using System;
 
 public enum GameState
@@ -22,45 +22,60 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Settings")]
     [SerializeField] private float gameDuration = 60f;
+
     private float timeRemaining;
 
     [Header("UI Canvases")]
     [SerializeField] private GameObject winCanvas;
     [SerializeField] private GameObject loseCanvas;
 
+    [Header("HUD")]
+    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text killsText;
+    [SerializeField] private TMP_Text timerText;
+
     public event Action<GameState> OnStateChanged;
-    public event Action<int> OnScoreChanged;
-    public event Action<int> OnEnemiesKilledChanged;
-    public event Action<float> OnTimeUpdated;
 
     void Awake()
     {
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
         DontDestroyOnLoad(gameObject);
     }
 
     void Start()
     {
-        // ensure UI starts hidden
-        if (winCanvas) winCanvas.SetActive(false);
-        if (loseCanvas) loseCanvas.SetActive(false);
+        if (winCanvas != null)
+            winCanvas.SetActive(false);
+
+        if (loseCanvas != null)
+            loseCanvas.SetActive(false);
+
+        UpdateHUD();
     }
 
     void Update()
     {
-        if (CurrentState == GameState.Playing)
+        if (CurrentState != GameState.Playing)
+            return;
+
+        timeRemaining -= Time.deltaTime;
+        TimeSurvived += Time.deltaTime;
+
+        if (timeRemaining < 0)
+            timeRemaining = 0;
+
+        UpdateTimerUI();
+
+        if (timeRemaining <= 0)
         {
-            timeRemaining -= Time.deltaTime;
-            TimeSurvived += Time.deltaTime;
-
-            OnTimeUpdated?.Invoke(timeRemaining);
-
-            if (timeRemaining <= 0)
-                GameOver();
+            GameOver();
         }
     }
 
@@ -71,6 +86,7 @@ public class GameManager : MonoBehaviour
         ResetGame();
 
         CurrentState = GameState.Playing;
+
         Time.timeScale = 1f;
 
         HideAllUI();
@@ -89,9 +105,13 @@ public class GameManager : MonoBehaviour
 
         ShowLoseUI();
 
-        OnStateChanged?.Invoke(CurrentState);
+        LeaderboardManager.Instance?.AddScore(
+            Score,
+            EnemiesKilled,
+            TimeSurvived
+        );
 
-        LeaderboardManager.Instance?.AddScore(Score, EnemiesKilled, TimeSurvived);
+        OnStateChanged?.Invoke(CurrentState);
     }
 
     public void GameWon()
@@ -105,9 +125,13 @@ public class GameManager : MonoBehaviour
 
         ShowWinUI();
 
-        OnStateChanged?.Invoke(CurrentState);
+        LeaderboardManager.Instance?.AddScore(
+            Score,
+            EnemiesKilled,
+            TimeSurvived
+        );
 
-        LeaderboardManager.Instance?.AddScore(Score, EnemiesKilled, TimeSurvived);
+        OnStateChanged?.Invoke(CurrentState);
     }
 
     void ResetGame()
@@ -115,40 +139,97 @@ public class GameManager : MonoBehaviour
         Score = 0;
         EnemiesKilled = 0;
         TimeSurvived = 0f;
+
         timeRemaining = gameDuration;
+
+        UpdateHUD();
+        UpdateTimerUI();
     }
 
-    // ---------------- UI HANDLING ----------------
-
-    void HideAllUI()
-    {
-        if (winCanvas) winCanvas.SetActive(false);
-        if (loseCanvas) loseCanvas.SetActive(false);
-    }
-
-    void ShowWinUI()
-    {
-        if (winCanvas) winCanvas.SetActive(true);
-        if (loseCanvas) loseCanvas.SetActive(false);
-    }
-
-    void ShowLoseUI()
-    {
-        if (loseCanvas) loseCanvas.SetActive(true);
-        if (winCanvas) winCanvas.SetActive(false);
-    }
-
-    // ---------------- STATS ----------------
+    // ---------------- SCORE ----------------
 
     public void AddScore(int amount)
     {
         Score += amount;
-        OnScoreChanged?.Invoke(Score);
+
+        UpdateHUD();
     }
 
     public void AddKill()
     {
         EnemiesKilled++;
-        OnEnemiesKilledChanged?.Invoke(EnemiesKilled);
+
+        UpdateHUD();
+    }
+
+    // ---------------- UI ----------------
+
+    void UpdateHUD()
+    {
+        if (scoreText != null)
+        {
+            scoreText.text = "Score: " + Score;
+        }
+
+        if (killsText != null)
+        {
+            killsText.text = "Kills: " + EnemiesKilled;
+        }
+    }
+
+    void UpdateTimerUI()
+    {
+        if (timerText == null)
+            return;
+
+        int minutes =
+            Mathf.FloorToInt(timeRemaining / 60);
+
+        int seconds =
+            Mathf.FloorToInt(timeRemaining % 60);
+
+        timerText.text =
+            string.Format("{0:00}:{1:00}",
+            minutes,
+            seconds);
+    }
+
+    void HideAllUI()
+    {
+        if (winCanvas != null)
+            winCanvas.SetActive(false);
+
+        if (loseCanvas != null)
+            loseCanvas.SetActive(false);
+    }
+
+    void ShowWinUI()
+    {
+        if (winCanvas != null)
+            winCanvas.SetActive(true);
+
+        if (loseCanvas != null)
+            loseCanvas.SetActive(false);
+    }
+
+    void ShowLoseUI()
+    {
+        if (loseCanvas != null)
+            loseCanvas.SetActive(true);
+
+        if (winCanvas != null)
+            winCanvas.SetActive(false);
+    }
+
+    // ---------------- GETTERS ----------------
+
+    public float GetTimeRemaining()
+    {
+        return timeRemaining;
+    }
+
+    public float GetTimeSurvived()
+    {
+        return TimeSurvived;
     }
 }

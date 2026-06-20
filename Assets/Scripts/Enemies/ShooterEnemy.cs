@@ -19,6 +19,8 @@ public class ShooterEnemy : BaseEnemy
     protected override void Start()
     {
         maxHealth = 120;
+        scoreValue = 20;
+
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;

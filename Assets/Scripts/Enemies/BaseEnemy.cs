@@ -29,6 +29,13 @@ public class BaseEnemy : MonoBehaviour
     protected virtual void Die()
     {
         Debug.Log(gameObject.name + " died");
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(scoreValue);
+            GameManager.Instance.AddKill();
+        }
+
         Destroy(gameObject);
     }
 }

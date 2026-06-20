@@ -10,7 +10,7 @@ public class SimpleGun : MonoBehaviour
 
     [Header("Gun Settings")]
     public float bulletSpeed = 30f;
-    public int magazineSize = 10;
+    public int magazineSize = 50;
     public float reloadTime = 2f;
 
     [Header("Animation")]

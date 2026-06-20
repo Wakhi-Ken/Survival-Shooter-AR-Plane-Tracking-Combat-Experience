@@ -16,6 +16,8 @@ public class MeleeEnemy : BaseEnemy
     protected override void Start()
     {
         maxHealth = 150;
+        scoreValue = 10;
+
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;

@@ -27,6 +27,8 @@ public class BossEnemy : BaseEnemy
     protected override void Start()
     {
         maxHealth = 250;
+        scoreValue = 100;
+
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
