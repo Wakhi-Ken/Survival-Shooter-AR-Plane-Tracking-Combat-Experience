@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerAnimationController : MonoBehaviour
 {
@@ -30,16 +30,10 @@ public class PlayerAnimationController : MonoBehaviour
         if (weaponPrefab == null || handSocket == null)
             return;
 
-        currentWeapon = Instantiate(
-            weaponPrefab,
-            handSocket
-        );
+        currentWeapon = Instantiate(weaponPrefab, handSocket);
 
-        currentWeapon.transform.localPosition =
-            weaponPositionOffset;
-
-        currentWeapon.transform.localRotation =
-            Quaternion.Euler(weaponRotationOffset);
+        currentWeapon.transform.localPosition = weaponPositionOffset;
+        currentWeapon.transform.localRotation = Quaternion.Euler(weaponRotationOffset);
     }
 
     public void PlayShoot()
@@ -52,5 +46,22 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (animator != null)
             animator.SetTrigger("Reload");
+    }
+
+    // 🔥 ADD THIS
+    public void PlayDie()
+    {
+        if (animator != null)
+        {
+            animator.ResetTrigger("Shoot");
+            animator.ResetTrigger("Reload");
+            animator.SetTrigger("Die");
+        }
+
+        // optional: detach weapon on death
+        if (currentWeapon != null)
+        {
+            Destroy(currentWeapon);
+        }
     }
 }
