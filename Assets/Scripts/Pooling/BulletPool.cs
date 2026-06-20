@@ -13,7 +13,13 @@ public class BulletPool : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+            Instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
     }
 
     void Start()
@@ -38,12 +44,33 @@ public class BulletPool : MonoBehaviour
     {
         for (int i = 0; i < pool.Count; i++)
         {
-            if (pool[i] != null && pool[i].activeSelf == false)
+            if (!pool[i].activeInHierarchy)
             {
+                ResetBullet(pool[i]);
                 return pool[i];
             }
         }
 
-        return CreateNewBullet();
+        GameObject newBullet = CreateNewBullet();
+        ResetBullet(newBullet);
+        return newBullet;
+    }
+
+    void ResetBullet(GameObject bullet)
+    {
+        Rigidbody rb = bullet.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        bullet.SetActive(true);
+    }
+
+    public void ReturnBullet(GameObject bullet)
+    {
+        bullet.SetActive(false);
     }
 }

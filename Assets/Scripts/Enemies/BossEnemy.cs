@@ -26,8 +26,6 @@ public class BossEnemy : BaseEnemy
     private float lastShootTime;
     private float lastMeleeTime;
 
-    private bool isDead = false;
-
     protected override void Start()
     {
         maxHealth = 250;
@@ -43,16 +41,14 @@ public class BossEnemy : BaseEnemy
 
     void Update()
     {
-        if (isDead || player == null) return;
+        if (player == null) return;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
         Move();
 
-        // 🔥 ALWAYS SHOOT
-        Shoot();
+        Shoot(); // ALWAYS SHOOT
 
-        // 🔴 MELEE ONLY WHEN CLOSE
         if (distance <= meleeRange)
         {
             Melee();
@@ -72,7 +68,7 @@ public class BossEnemy : BaseEnemy
         );
     }
 
-    // ---------------- SHOOT (ALWAYS ACTIVE) ----------------
+    // ---------------- SHOOT ----------------
     void Shoot()
     {
         if (Time.time < lastShootTime + shootCooldown)
@@ -92,15 +88,12 @@ public class BossEnemy : BaseEnemy
             Quaternion.identity
         );
 
-        Vector3 direction =
-            (player.position - shootPoint.position).normalized;
+        Vector3 direction = (player.position - shootPoint.position).normalized;
 
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
         if (rb != null)
             rb.linearVelocity = direction * bulletSpeed;
-
-        Destroy(bullet, 5f);
     }
 
     // ---------------- MELEE ----------------
@@ -125,11 +118,6 @@ public class BossEnemy : BaseEnemy
     // ---------------- DEATH ----------------
     protected override void Die()
     {
-        if (isDead) return;
-        isDead = true;
-
-        this.enabled = false;
-
         if (bossAnimator != null)
         {
             bossAnimator.SetBool("IsWalking", false);
@@ -138,10 +126,12 @@ public class BossEnemy : BaseEnemy
             bossAnimator.SetTrigger("Die");
         }
 
+        this.enabled = false;
+
         Collider col = GetComponent<Collider>();
         if (col != null)
             col.enabled = false;
 
-        Destroy(gameObject, 2.5f);
+        base.Die(); // ✅ IMPORTANT: updates score + kill count
     }
 }

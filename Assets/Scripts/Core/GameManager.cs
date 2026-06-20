@@ -21,11 +21,7 @@ public class GameManager : MonoBehaviour
     public int EnemiesKilled { get; private set; }
     public float TimeSurvived { get; private set; }
 
-    
-
-    private float timeRemaining;
-
-    [Header("UI Canvases")]
+    [Header("UI")]
     [SerializeField] private GameObject winCanvas;
     [SerializeField] private GameObject loseCanvas;
 
@@ -35,6 +31,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
 
     public event Action<GameState> OnStateChanged;
+
+    void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
 
     void OnEnable()
     {
@@ -54,38 +63,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-    void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        DontDestroyOnLoad(gameObject);
-    }
-
-    void Start()
-    {
-        if (winCanvas != null)
-            winCanvas.SetActive(false);
-
-        if (loseCanvas != null)
-            loseCanvas.SetActive(false);
-
-        UpdateHUD();
-    }
-
     void Update()
     {
         if (CurrentState != GameState.Playing)
             return;
+
         TimeSurvived += Time.deltaTime;
         UpdateTimerUI();
-
     }
 
     // ---------------- GAME FLOW ----------------
@@ -95,10 +79,12 @@ public class GameManager : MonoBehaviour
         ResetGame();
 
         CurrentState = GameState.Playing;
-
         Time.timeScale = 1f;
 
         HideAllUI();
+
+        UpdateHUD();
+        UpdateTimerUI();
 
         OnStateChanged?.Invoke(CurrentState);
     }
@@ -109,16 +95,9 @@ public class GameManager : MonoBehaviour
             return;
 
         CurrentState = GameState.GameOver;
-
         Time.timeScale = 0f;
 
         ShowLoseUI();
-
-        LeaderboardManager.Instance?.AddScore(
-            Score,
-            EnemiesKilled,
-            TimeSurvived
-        );
 
         OnStateChanged?.Invoke(CurrentState);
     }
@@ -129,16 +108,9 @@ public class GameManager : MonoBehaviour
             return;
 
         CurrentState = GameState.Win;
-
         Time.timeScale = 0f;
 
         ShowWinUI();
-
-        LeaderboardManager.Instance?.AddScore(
-            Score,
-            EnemiesKilled,
-            TimeSurvived
-        );
 
         OnStateChanged?.Invoke(CurrentState);
     }
@@ -150,22 +122,19 @@ public class GameManager : MonoBehaviour
         TimeSurvived = 0f;
 
         UpdateHUD();
-        UpdateTimerUI();
     }
 
-    // ---------------- SCORE ----------------
+    // ---------------- SCORE SYSTEM ----------------
 
     public void AddScore(int amount)
     {
         Score += amount;
-
         UpdateHUD();
     }
 
     public void AddKill()
     {
         EnemiesKilled++;
-
         UpdateHUD();
     }
 
@@ -174,63 +143,37 @@ public class GameManager : MonoBehaviour
     void UpdateHUD()
     {
         if (scoreText != null)
-        {
             scoreText.text = "Score: " + Score;
-        }
 
         if (killsText != null)
-        {
             killsText.text = "Kills: " + EnemiesKilled;
-        }
     }
 
     void UpdateTimerUI()
     {
-        if (timerText == null)
-            return;
+        if (timerText == null) return;
 
         int minutes = Mathf.FloorToInt(TimeSurvived / 60);
         int seconds = Mathf.FloorToInt(TimeSurvived % 60);
 
-        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        timerText.text = $"{minutes:00}:{seconds:00}";
     }
 
     void HideAllUI()
     {
-        if (winCanvas != null)
-            winCanvas.SetActive(false);
-
-        if (loseCanvas != null)
-            loseCanvas.SetActive(false);
+        if (winCanvas) winCanvas.SetActive(false);
+        if (loseCanvas) loseCanvas.SetActive(false);
     }
 
     void ShowWinUI()
     {
-        if (winCanvas != null)
-            winCanvas.SetActive(true);
-
-        if (loseCanvas != null)
-            loseCanvas.SetActive(false);
+        if (winCanvas) winCanvas.SetActive(true);
+        if (loseCanvas) loseCanvas.SetActive(false);
     }
 
     void ShowLoseUI()
     {
-        if (loseCanvas != null)
-            loseCanvas.SetActive(true);
-
-        if (winCanvas != null)
-            winCanvas.SetActive(false);
-    }
-
-    // ---------------- GETTERS ----------------
-
-    public float GetTimeRemaining()
-    {
-        return timeRemaining;
-    }
-
-    public float GetTimeSurvived()
-    {
-        return TimeSurvived;
+        if (loseCanvas) loseCanvas.SetActive(true);
+        if (winCanvas) winCanvas.SetActive(false);
     }
 }
