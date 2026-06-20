@@ -4,7 +4,6 @@ public class BossEnemy : BaseEnemy
 {
     [Header("Movement")]
     public float moveSpeed = 3f;
-    public float strafeSpeed = 2.5f;
 
     [Header("Ranges")]
     public float meleeRange = 2f;
@@ -19,10 +18,15 @@ public class BossEnemy : BaseEnemy
     public float bulletSpeed = 20f;
     public float shootCooldown = 0.8f;
 
+    [Header("Animator")]
+    public Animator bossAnimator;
+
     private Transform player;
 
     private float lastShootTime;
     private float lastMeleeTime;
+
+    private bool isDead = false;
 
     protected override void Start()
     {
@@ -32,64 +36,52 @@ public class BossEnemy : BaseEnemy
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        if (bossAnimator == null)
+            bossAnimator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        if (player == null) return;
+        if (isDead || player == null) return;
 
-        FacePlayer();
+        float distance = Vector3.Distance(transform.position, player.position);
 
-        float distance =
-            Vector3.Distance(transform.position, player.position);
+        Move();
 
-        MoveForwardAndStrafe();
+        // 🔥 ALWAYS SHOOT
         Shoot();
 
+        // 🔴 MELEE ONLY WHEN CLOSE
         if (distance <= meleeRange)
         {
-            MeleeAttack();
+            Melee();
         }
     }
 
-    // ---------------- LOOK AT PLAYER ----------------
-
-    void FacePlayer()
+    // ---------------- MOVE ----------------
+    void Move()
     {
-        Vector3 dir = player.position - transform.position;
-        dir.y = 0;
+        if (bossAnimator != null)
+            bossAnimator.SetBool("IsWalking", true);
 
-        if (dir.sqrMagnitude > 0.01f)
-            transform.rotation = Quaternion.LookRotation(dir);
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            player.position,
+            moveSpeed * Time.deltaTime
+        );
     }
 
-    // ---------------- SIMPLE MOVEMENT ----------------
-
-    void MoveForwardAndStrafe()
-    {
-        Vector3 forward =
-            (player.position - transform.position).normalized;
-
-        Vector3 right =
-            Vector3.Cross(forward, Vector3.up);
-
-        float strafe = Mathf.Sin(Time.time * 2f);
-
-        Vector3 move =
-            forward * moveSpeed +
-            right * strafe * strafeSpeed;
-
-        transform.position += move * Time.deltaTime;
-    }
-
-    // ---------------- SHOOTING ----------------
-
+    // ---------------- SHOOT (ALWAYS ACTIVE) ----------------
     void Shoot()
     {
         if (Time.time < lastShootTime + shootCooldown)
             return;
 
         lastShootTime = Time.time;
+
+        if (bossAnimator != null)
+            bossAnimator.SetTrigger("Shoot");
 
         if (bulletPrefab == null || shootPoint == null)
             return;
@@ -106,28 +98,50 @@ public class BossEnemy : BaseEnemy
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
         if (rb != null)
-        {
             rb.linearVelocity = direction * bulletSpeed;
-        }
 
         Destroy(bullet, 5f);
     }
 
     // ---------------- MELEE ----------------
-
-    void MeleeAttack()
+    void Melee()
     {
         if (Time.time < lastMeleeTime + meleeCooldown)
             return;
 
         lastMeleeTime = Time.time;
 
-        Health playerHealth =
-            player.GetComponent<Health>();
+        if (bossAnimator != null)
+            bossAnimator.SetTrigger("Melee");
+
+        Health playerHealth = player.GetComponentInChildren<Health>();
 
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(meleeDamage);
         }
+    }
+
+    // ---------------- DEATH ----------------
+    protected override void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+
+        this.enabled = false;
+
+        if (bossAnimator != null)
+        {
+            bossAnimator.SetBool("IsWalking", false);
+            bossAnimator.ResetTrigger("Shoot");
+            bossAnimator.ResetTrigger("Melee");
+            bossAnimator.SetTrigger("Die");
+        }
+
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = false;
+
+        Destroy(gameObject, 2.5f);
     }
 }
