@@ -1,24 +1,23 @@
 using UnityEngine;
 
-public class Medkit : MonoBehaviour
+public class MedKit : MonoBehaviour
 {
     public int healAmount = 25;
-    public float rotateSpeed = 50f;
-
-    void Update()
-    {
-        transform.Rotate(0f, rotateSpeed * Time.deltaTime, 0f);
-    }
 
     private void OnTriggerEnter(Collider other)
     {
-        Health health = other.GetComponentInParent<Health>();
+        Debug.Log("Touched: " + other.name);
 
-        if (health != null)
+        Health playerHealth =
+            other.GetComponentInParent<Health>();
+
+        if (playerHealth != null)
         {
-            health.Heal(healAmount);
+            Debug.Log("Player collected medkit!");
+
+            playerHealth.Heal(healAmount);
+
             Destroy(gameObject);
         }
-        Debug.Log("Medkit touched by: " + other.name);
     }
 }

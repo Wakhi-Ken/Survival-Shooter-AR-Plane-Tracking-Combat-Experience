@@ -11,6 +11,12 @@ public class ARPlaneSpawner : MonoBehaviour
     public GameObject shooterEnemy;
     public GameObject bossEnemy;
 
+    [Header("Medkit")]
+    public GameObject medkitPrefab;
+    public float medkitSpawnInterval = 12f;
+    public float medkitSpawnRadius = 3f;
+    public int maxMedkits = 3;
+
     [Header("Spawn Settings")]
     public float spawnInterval = 5f;
     public int maxEnemies = 5;
@@ -19,19 +25,22 @@ public class ARPlaneSpawner : MonoBehaviour
     public float meleeHeight = 1.2f;
     public float shooterHeight = 1.2f;
     public float bossHeight = 1.2f;
+    public float medkitHeight = 1.0f;
 
     private List<GameObject> spawnedEnemies = new List<GameObject>();
+    private List<GameObject> spawnedMedkits = new List<GameObject>();
 
     private bool bossSpawned = false;
 
     void Start()
     {
         InvokeRepeating(nameof(SpawnEnemy), 2f, spawnInterval);
+        InvokeRepeating(nameof(SpawnMedkit), 3f, medkitSpawnInterval);
 
-        // Spawn boss after 30 seconds
         Invoke(nameof(SpawnBoss), 30f);
     }
 
+    // ---------------- ENEMIES ----------------
     void SpawnEnemy()
     {
         if (bossSpawned)
@@ -53,13 +62,9 @@ public class ARPlaneSpawner : MonoBehaviour
         GameObject enemyPrefab = GetRandomEnemy();
 
         if (enemyPrefab == meleeEnemy)
-        {
             spawnPosition.y += meleeHeight;
-        }
         else if (enemyPrefab == shooterEnemy)
-        {
             spawnPosition.y += shooterHeight;
-        }
 
         GameObject enemy =
             Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
@@ -67,6 +72,46 @@ public class ARPlaneSpawner : MonoBehaviour
         spawnedEnemies.Add(enemy);
     }
 
+    // ---------------- MEDKIT ----------------
+    void SpawnMedkit()
+    {
+        if (medkitPrefab == null)
+            return;
+
+        CleanupDeadMedkits();
+
+        if (spawnedMedkits.Count >= maxMedkits)
+            return;
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player == null)
+            return;
+
+        Vector3 playerPos = player.transform.position;
+
+        Vector2 randomCircle =
+            Random.insideUnitCircle * medkitSpawnRadius;
+
+        Vector3 spawnPosition = new Vector3(
+            playerPos.x + randomCircle.x,
+            gameGround.position.y + medkitHeight,
+            playerPos.z + randomCircle.y
+        );
+
+        GameObject medkit =
+            Instantiate(
+                medkitPrefab,
+                spawnPosition,
+                Quaternion.identity
+            );
+
+        spawnedMedkits.Add(medkit);
+
+        Debug.Log("🩹 Medkit spawned near player");
+    }
+
+    // ---------------- BOSS ----------------
     void SpawnBoss()
     {
         if (bossSpawned)
@@ -83,27 +128,23 @@ public class ARPlaneSpawner : MonoBehaviour
         spawnedEnemies.Add(boss);
     }
 
+    // ---------------- GROUND POINT ----------------
     Vector3 GetRandomPointOnGround()
     {
         Renderer rend = gameGround.GetComponent<Renderer>();
 
         if (rend == null)
-        {
             return gameGround.position;
-        }
 
         Bounds bounds = rend.bounds;
 
         float x = Random.Range(bounds.min.x, bounds.max.x);
         float z = Random.Range(bounds.min.z, bounds.max.z);
 
-        return new Vector3(
-            x,
-            bounds.max.y,
-            z
-        );
+        return new Vector3(x, bounds.max.y, z);
     }
 
+    // ---------------- ENEMY TYPE ----------------
     GameObject GetRandomEnemy()
     {
         int r = Random.Range(0, 2);
@@ -115,8 +156,14 @@ public class ARPlaneSpawner : MonoBehaviour
         };
     }
 
+    // ---------------- CLEANUP ----------------
     void CleanupDeadEnemies()
     {
-        spawnedEnemies.RemoveAll(enemy => enemy == null);
+        spawnedEnemies.RemoveAll(e => e == null);
+    }
+
+    void CleanupDeadMedkits()
+    {
+        spawnedMedkits.RemoveAll(m => m == null);
     }
 }
