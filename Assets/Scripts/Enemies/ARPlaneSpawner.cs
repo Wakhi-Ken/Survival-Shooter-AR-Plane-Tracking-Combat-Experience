@@ -79,9 +79,10 @@ public class ARPlaneSpawner : MonoBehaviour
     Vector3 GetCenterPosition()
     {
         return new Vector3(
-            arPlane.position.x,
-            arPlane.position.y + 1f,
-            arPlane.position.z
+    arPlane.position.x,
+    10.97f,
+    arPlane.position.z
+
         );
     }
 
