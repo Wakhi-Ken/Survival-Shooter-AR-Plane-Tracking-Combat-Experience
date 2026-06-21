@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
 
     public event Action<GameState> OnStateChanged;
 
-    void Awake()
+    private void Awake()
     {
         if (Instance == null)
         {
@@ -48,36 +48,54 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return;
         }
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    private void Update()
+    {
+        if (CurrentState != GameState.Playing)
+            return;
+
+        TimeSurvived += Time.deltaTime;
+        UpdateTimerUI();
+    }
+
     // ---------------- SCENE LOAD ----------------
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Stage1")
         {
             ResetBossSystem(1);
             StartGame();
-            Invoke(nameof(RebindBossUI), 0.1f);
         }
         else if (scene.name == "Stage2")
         {
             ResetBossSystem(2);
             StartGame();
-            Invoke(nameof(RebindBossUI), 0.1f);
         }
+    }
+
+    // ---------------- HUD BINDING ----------------
+
+    public void RebindUI(TMP_Text score, TMP_Text kills, TMP_Text timer)
+    {
+        scoreText = score;
+        killsText = kills;
+        timerText = timer;
+
+        UpdateHUD();
+        UpdateTimerUI();
     }
 
     public void RebindBossUI(TMP_Text bossText)
@@ -100,6 +118,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
 
         HideAllUI();
+
         UpdateHUD();
         UpdateTimerUI();
 
@@ -112,6 +131,7 @@ public class GameManager : MonoBehaviour
             return;
 
         CurrentState = GameState.GameOver;
+
         Time.timeScale = 0f;
 
         ShowLoseUI();
@@ -126,12 +146,27 @@ public class GameManager : MonoBehaviour
             return;
 
         CurrentState = GameState.Win;
+
         Time.timeScale = 0f;
 
         ShowWinUI();
         SaveSession();
 
         OnStateChanged?.Invoke(CurrentState);
+    }
+
+    // ---------------- SCORE ----------------
+
+    public void AddScore(int amount)
+    {
+        Score += amount;
+        UpdateHUD();
+    }
+
+    public void AddKill()
+    {
+        EnemiesKilled++;
+        UpdateHUD();
     }
 
     // ---------------- BOSS SYSTEM ----------------
@@ -155,40 +190,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ShowBossMessage(string message, float time = 3f)
+    public void ShowBossMessage(string message, float duration = 3f)
     {
-        if (bossMessageText == null) return;
+        if (bossMessageText == null)
+            return;
 
         bossMessageText.text = message;
         bossMessageText.gameObject.SetActive(true);
 
         CancelInvoke(nameof(HideBossMessage));
-        Invoke(nameof(HideBossMessage), time);
+        Invoke(nameof(HideBossMessage), duration);
     }
 
-    void HideBossMessage()
+    private void HideBossMessage()
     {
         if (bossMessageText != null)
             bossMessageText.gameObject.SetActive(false);
     }
 
-    // ---------------- SCORE ----------------
-
-    public void AddScore(int amount)
-    {
-        Score += amount;
-        UpdateHUD();
-    }
-
-    public void AddKill()
-    {
-        EnemiesKilled++;
-        UpdateHUD();
-    }
-
     // ---------------- LEADERBOARD ----------------
 
-    void SaveSession()
+    private void SaveSession()
     {
         if (LeaderboardManager.Instance != null)
         {
@@ -202,17 +224,7 @@ public class GameManager : MonoBehaviour
 
     // ---------------- UI ----------------
 
-    public void RebindUI(TMP_Text score, TMP_Text kills, TMP_Text timer)
-    {
-        scoreText = score;
-        killsText = kills;
-        timerText = timer;
-
-        UpdateHUD();
-        UpdateTimerUI();
-    }
-
-    void UpdateHUD()
+    private void UpdateHUD()
     {
         if (scoreText != null)
             scoreText.text = "Score: " + Score;
@@ -221,31 +233,41 @@ public class GameManager : MonoBehaviour
             killsText.text = "Kills: " + EnemiesKilled;
     }
 
-    void UpdateTimerUI()
+    private void UpdateTimerUI()
     {
-        if (timerText == null) return;
+        if (timerText == null)
+            return;
 
-        int minutes = Mathf.FloorToInt(TimeSurvived / 60);
-        int seconds = Mathf.FloorToInt(TimeSurvived % 60);
+        int minutes = Mathf.FloorToInt(TimeSurvived / 60f);
+        int seconds = Mathf.FloorToInt(TimeSurvived % 60f);
 
         timerText.text = $"{minutes:00}:{seconds:00}";
     }
 
-    void HideAllUI()
+    private void HideAllUI()
     {
-        if (winCanvas) winCanvas.SetActive(false);
-        if (loseCanvas) loseCanvas.SetActive(false);
+        if (winCanvas != null)
+            winCanvas.SetActive(false);
+
+        if (loseCanvas != null)
+            loseCanvas.SetActive(false);
     }
 
-    void ShowWinUI()
+    private void ShowWinUI()
     {
-        if (winCanvas) winCanvas.SetActive(true);
-        if (loseCanvas) loseCanvas.SetActive(false);
+        if (winCanvas != null)
+            winCanvas.SetActive(true);
+
+        if (loseCanvas != null)
+            loseCanvas.SetActive(false);
     }
 
-    void ShowLoseUI()
+    private void ShowLoseUI()
     {
-        if (loseCanvas) loseCanvas.SetActive(true);
-        if (winCanvas) winCanvas.SetActive(false);
+        if (loseCanvas != null)
+            loseCanvas.SetActive(true);
+
+        if (winCanvas != null)
+            winCanvas.SetActive(false);
     }
 }

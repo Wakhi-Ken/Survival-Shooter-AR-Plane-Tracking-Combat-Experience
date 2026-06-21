@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HUDBinder : MonoBehaviour
 {
-    [Header("UI References")]
+    [Header("HUD")]
     public TMP_Text scoreText;
     public TMP_Text killsText;
     public TMP_Text timerText;
@@ -11,15 +11,19 @@ public class HUDBinder : MonoBehaviour
     [Header("Boss UI")]
     public TMP_Text bossMessageText;
 
-    void Start()
+    private void Start()
     {
-        if (GameManager.Instance != null)
-        {
-            // HUD bind
-            GameManager.Instance.RebindUI(scoreText, killsText, timerText);
+        if (GameManager.Instance == null)
+            return;
 
-            // Boss UI bind
-            GameManager.Instance.RebindBossUI(bossMessageText);
-        }
+        GameManager.Instance.RebindUI(
+            scoreText,
+            killsText,
+            timerText
+        );
+
+        GameManager.Instance.RebindBossUI(
+            bossMessageText
+        );
     }
 }
