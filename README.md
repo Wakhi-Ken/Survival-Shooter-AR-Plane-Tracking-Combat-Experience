@@ -1,4 +1,5 @@
 # AR Shooter Game (Unity)
+<img width="241" height="286" alt="image" src="https://github.com/user-attachments/assets/e0c58b26-4eb6-42df-b3d2-33ad3148e4af" />
 
 An Augmented Reality (AR) shooter game built in Unity with enemy spawning, object pooling, and real-time gameplay systems.
 
