@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using System.Collections;
 
@@ -15,6 +15,8 @@ public class SimpleGun : MonoBehaviour
 
     [Header("Animation")]
     public PlayerAnimationController playerAnimator;
+
+    public AudioClip reloadClip;
 
     [Header("UI")]
     public TMP_Text ammoText;
@@ -35,14 +37,7 @@ public class SimpleGun : MonoBehaviour
 
     public void Shoot()
     {
-        if (isReloading)
-            return;
-
-        if (shootPoint == null)
-        {
-            Debug.LogWarning("Shoot Point is missing!");
-            return;
-        }
+        if (isReloading) return;
 
         if (bulletsLeft <= 0)
         {
@@ -53,28 +48,19 @@ public class SimpleGun : MonoBehaviour
         bulletsLeft--;
         UpdateUI();
 
-        // Play shoot animation
         if (playerAnimator != null)
-        {
             playerAnimator.PlayShoot();
-        }
 
         GameObject bullet = BulletPool.Instance.GetBullet();
-
-        if (bullet == null)
-            return;
+        if (bullet == null) return;
 
         bullet.transform.position = shootPoint.position;
         bullet.transform.rotation = shootPoint.rotation;
-
         bullet.SetActive(true);
 
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
-
         if (rb != null)
-        {
             rb.linearVelocity = shootPoint.forward * bulletSpeed;
-        }
     }
 
     public void Reload()
@@ -85,10 +71,13 @@ public class SimpleGun : MonoBehaviour
         if (bulletsLeft == magazineSize)
             return;
 
-        // Play reload animation
         if (playerAnimator != null)
-        {
             playerAnimator.PlayReload();
+
+        // 🔊 SIMPLE FIX: plays sound instantly, always works
+        if (reloadClip != null)
+        {
+            AudioSource.PlayClipAtPoint(reloadClip, transform.position, 1f);
         }
 
         StartCoroutine(ReloadRoutine());
@@ -104,7 +93,6 @@ public class SimpleGun : MonoBehaviour
         yield return new WaitForSeconds(reloadTime);
 
         bulletsLeft = magazineSize;
-
         UpdateUI();
 
         if (reloadText != null)
@@ -116,8 +104,6 @@ public class SimpleGun : MonoBehaviour
     void UpdateUI()
     {
         if (ammoText != null)
-        {
             ammoText.text = bulletsLeft + " / " + magazineSize;
-        }
     }
 }

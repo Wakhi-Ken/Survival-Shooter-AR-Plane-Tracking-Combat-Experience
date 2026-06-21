@@ -1,5 +1,5 @@
-// Assets/Scripts/Managers/AudioManager.cs
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 [System.Serializable]
@@ -7,77 +7,274 @@ public class Sound
 {
     public string name;
     public AudioClip clip;
-    [Range(0f, 1f)] public float volume = 1f;
-    [Range(0.1f, 3f)] public float pitch = 1f;
-    public bool loop = false;
-    public bool playOnAwake = false;
+
+    [Range(0f, 1f)]
+    public float volume = 1f;
+
+    [Range(0.1f, 3f)]
+    public float pitch = 1f;
 }
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance { get; private set; }
+    public static AudioManager Instance;
 
-    [SerializeField] private Sound[] sounds;
-    private Dictionary<string, AudioSource> audioSources = new Dictionary<string, AudioSource>();
+    // ---------------- SAVE KEYS ----------------
 
-    [Header("Audio Sources")]
-    [SerializeField] private AudioSource musicSource;
-    [SerializeField] private AudioSource sfxSource;
+    private const string MENU_VOLUME_KEY = "MenuVolume";
+    private const string GAME_VOLUME_KEY = "GameVolume";
+    private const string SFX_VOLUME_KEY = "SFXVolume";
+
+    // ---------------- AUDIO SOURCES ----------------
+
+    [Header("Menu Music")]
+    public AudioSource menuMusicSource;
+    public AudioClip[] menuMusicClips;
+
+    [Header("Game Music")]
+    public AudioSource gameMusicSource;
+    public AudioClip[] gameMusicClips;
+
+    [Header("SFX")]
+    public AudioSource[] sfxSources;
+    public Sound[] sfxSounds;
+
+    // ---------------- UI ----------------
+
+    [Header("Volume Sliders")]
+    public Slider menuMusicSlider;
+    public Slider gameMusicSlider;
+    public Slider sfxSlider;
+
+    // ---------------- VOLUMES ----------------
+
+    [Header("Volume Settings")]
+    [Range(0f, 1f)]
+    public float menuMusicVolume = 1f;
+
+    [Range(0f, 1f)]
+    public float gameMusicVolume = 1f;
+
+    [Range(0f, 1f)]
+    public float sfxVolume = 1f;
+
+    // ---------------- INTERNAL ----------------
+
+    private Dictionary<string, Sound> sfxDictionary =
+        new Dictionary<string, Sound>();
+
+    private int sfxSourceIndex = 0;
+
+    // ---------------- AWAKE ----------------
 
     void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
+        {
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
+            return;
+        }
 
-        // Create audio sources for each sound
-        foreach (Sound sound in sounds)
+        LoadVolumes();
+
+        foreach (Sound sound in sfxSounds)
         {
-            AudioSource source = gameObject.AddComponent<AudioSource>();
-            source.clip = sound.clip;
-            source.volume = sound.volume;
+            if (!sfxDictionary.ContainsKey(sound.name))
+                sfxDictionary.Add(sound.name, sound);
+        }
+    }
+
+    // ---------------- START ----------------
+
+    void Start()
+    {
+        SetupSliders();
+        ApplyVolumes();
+    }
+
+    // ---------------- UPDATE ----------------
+
+    void Update()
+    {
+        ApplyVolumes();
+    }
+
+    // ---------------- SLIDER SETUP ----------------
+
+    void SetupSliders()
+    {
+        if (menuMusicSlider != null)
+        {
+            menuMusicSlider.value = menuMusicVolume;
+            menuMusicSlider.onValueChanged.AddListener(SetMenuMusicVolume);
+        }
+
+        if (gameMusicSlider != null)
+        {
+            gameMusicSlider.value = gameMusicVolume;
+            gameMusicSlider.onValueChanged.AddListener(SetGameMusicVolume);
+        }
+
+        if (sfxSlider != null)
+        {
+            sfxSlider.value = sfxVolume;
+            sfxSlider.onValueChanged.AddListener(SetSFXVolume);
+        }
+    }
+
+    // ---------------- APPLY VOLUMES ----------------
+
+    void ApplyVolumes()
+    {
+        if (menuMusicSource != null)
+            menuMusicSource.volume = menuMusicVolume;
+
+        if (gameMusicSource != null)
+            gameMusicSource.volume = gameMusicVolume;
+
+        if (sfxSources != null)
+        {
+            foreach (AudioSource source in sfxSources)
+            {
+                if (source != null)
+                    source.volume = sfxVolume;
+            }
+        }
+    }
+
+    // ---------------- MENU MUSIC ----------------
+
+    public void PlayMenuMusic(int index)
+    {
+        if (menuMusicSource == null)
+            return;
+
+        if (index < 0 || index >= menuMusicClips.Length)
+            return;
+
+        menuMusicSource.Stop();
+
+        menuMusicSource.clip = menuMusicClips[index];
+        menuMusicSource.loop = true;
+        menuMusicSource.Play();
+    }
+
+    public void StopMenuMusic()
+    {
+        if (menuMusicSource != null)
+            menuMusicSource.Stop();
+    }
+
+    // ---------------- GAME MUSIC ----------------
+
+    public void PlayGameMusic(int index)
+    {
+        if (gameMusicSource == null)
+            return;
+
+        if (index < 0 || index >= gameMusicClips.Length)
+            return;
+
+        gameMusicSource.Stop();
+
+        gameMusicSource.clip = gameMusicClips[index];
+        gameMusicSource.loop = true;
+        gameMusicSource.Play();
+    }
+
+    public void StopGameMusic()
+    {
+        if (gameMusicSource != null)
+            gameMusicSource.Stop();
+    }
+
+    // ---------------- SFX ----------------
+
+    public void PlaySFX(string soundName)
+    {
+        if (!sfxDictionary.TryGetValue(soundName, out Sound sound))
+        {
+            Debug.LogWarning("SFX not found: " + soundName);
+            return;
+        }
+
+        if (sfxSources == null || sfxSources.Length == 0)
+            return;
+
+        AudioSource source = sfxSources[sfxSourceIndex];
+
+        if (source != null)
+        {
             source.pitch = sound.pitch;
-            source.loop = sound.loop;
-            source.playOnAwake = sound.playOnAwake;
-            audioSources.Add(sound.name, source);
+
+            source.PlayOneShot(
+                sound.clip,
+                sound.volume * sfxVolume
+            );
         }
+
+        sfxSourceIndex++;
+
+        if (sfxSourceIndex >= sfxSources.Length)
+            sfxSourceIndex = 0;
     }
 
-    public void Play(string name)
+    // ---------------- SAVE / LOAD ----------------
+
+    void LoadVolumes()
     {
-        if (audioSources.TryGetValue(name, out AudioSource source))
-        {
-            source.Play();
-        }
-        else
-        {
-            Debug.LogWarning($"Sound '{name}' not found!");
-        }
+        menuMusicVolume =
+            PlayerPrefs.GetFloat(MENU_VOLUME_KEY, 1f);
+
+        gameMusicVolume =
+            PlayerPrefs.GetFloat(GAME_VOLUME_KEY, 1f);
+
+        sfxVolume =
+            PlayerPrefs.GetFloat(SFX_VOLUME_KEY, 1f);
     }
 
-    public void Stop(string name)
+    public void SaveVolumes()
     {
-        if (audioSources.TryGetValue(name, out AudioSource source))
-        {
-            source.Stop();
-        }
+        PlayerPrefs.SetFloat(
+            MENU_VOLUME_KEY,
+            menuMusicVolume
+        );
+
+        PlayerPrefs.SetFloat(
+            GAME_VOLUME_KEY,
+            gameMusicVolume
+        );
+
+        PlayerPrefs.SetFloat(
+            SFX_VOLUME_KEY,
+            sfxVolume
+        );
+
+        PlayerPrefs.Save();
     }
 
-    public void PlayOneShot(string name)
+    // ---------------- SLIDER FUNCTIONS ----------------
+
+    public void SetMenuMusicVolume(float value)
     {
-        if (audioSources.TryGetValue(name, out AudioSource source))
-        {
-            source.PlayOneShot(source.clip);
-        }
+        menuMusicVolume = value;
+        SaveVolumes();
     }
 
-    public void SetVolume(string name, float volume)
+    public void SetGameMusicVolume(float value)
     {
-        if (audioSources.TryGetValue(name, out AudioSource source))
-        {
-            source.volume = volume;
-        }
+        gameMusicVolume = value;
+        SaveVolumes();
+    }
+
+    public void SetSFXVolume(float value)
+    {
+        sfxVolume = value;
+        SaveVolumes();
     }
 }
