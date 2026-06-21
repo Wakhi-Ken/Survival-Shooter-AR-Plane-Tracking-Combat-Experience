@@ -3414,7 +3414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af849dceb4792e8498224ccebf4cd9e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
-  maxHealth: 100
+  maxHealth: 200
   scoreValue: 10
   damageEffectPrefab: {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
   effectSpawnPoint: {fileID: 6029550108881575331}
