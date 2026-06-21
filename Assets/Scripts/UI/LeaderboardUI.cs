@@ -4,15 +4,26 @@ using UnityEngine;
 public class LeaderboardUI : MonoBehaviour
 {
     public TMP_Text displayText;
+    public GameObject panel;
 
-    void OnEnable()
+    public void OpenLeaderboard()
     {
-        ShowLeaderboard();
+        panel.SetActive(true);
+        Refresh();
     }
 
-    public void ShowLeaderboard()
+    public void CloseLeaderboard()
     {
-        if (LeaderboardManager.Instance == null) return;
+        panel.SetActive(false);
+    }
+
+    public void Refresh()
+    {
+        if (LeaderboardManager.Instance == null)
+        {
+            displayText.text = "No data yet.";
+            return;
+        }
 
         var list = LeaderboardManager.Instance.sessions;
 

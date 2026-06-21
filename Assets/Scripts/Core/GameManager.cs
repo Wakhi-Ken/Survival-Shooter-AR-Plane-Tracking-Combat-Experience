@@ -41,14 +41,15 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
         {
             Destroy(gameObject);
             return;
         }
-
-        DontDestroyOnLoad(gameObject);
     }
 
     void OnEnable()
@@ -63,15 +64,8 @@ public class GameManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Stage1")
+        if (scene.name == "Stage1" || scene.name == "Stage2")
         {
-            SetBossRequirement(1);
-            StartGame();
-        }
-
-        if (scene.name == "Stage2")
-        {
-            SetBossRequirement(2);
             StartGame();
         }
     }
@@ -92,7 +86,6 @@ public class GameManager : MonoBehaviour
         Score = 0;
         EnemiesKilled = 0;
         TimeSurvived = 0f;
-
         bossesKilled = 0;
 
         CurrentState = GameState.Playing;
@@ -197,6 +190,16 @@ public class GameManager : MonoBehaviour
     }
 
     // ---------------- UI ----------------
+
+    public void RebindUI(TMP_Text score, TMP_Text kills, TMP_Text timer)
+    {
+        scoreText = score;
+        killsText = kills;
+        timerText = timer;
+
+        UpdateHUD();
+        UpdateTimerUI();
+    }
 
     void UpdateHUD()
     {
