@@ -16,6 +16,11 @@ public class Health : MonoBehaviour
 
     private bool isDead = false;
 
+    [Header("Damage Indicator")]
+    public Image damageIndicator;
+    public float maxAlpha = 1f;
+    public float fadeSpeed = 2f;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -38,12 +43,26 @@ public class Health : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damage;
+        
+
+        ShowDamageIndicator();
+
         UpdateUI();
 
         if (currentHealth <= 0)
         {
             Die();
         }
+    }
+
+    void ShowDamageIndicator()
+    {
+        if (damageIndicator == null) return;
+
+        Color c = damageIndicator.color;
+        c.a = maxAlpha;
+
+        damageIndicator.color = c;
     }
 
     public void Heal(int amount)
@@ -58,6 +77,24 @@ public class Health : MonoBehaviour
     {
         if (healthSlider != null)
             healthSlider.value = currentHealth;
+        
+    }
+
+    void Update()
+    {
+        if (damageIndicator == null) return;
+
+        Color c = damageIndicator.color;
+
+        if (c.a > 0)
+        {
+            c.a -= fadeSpeed * Time.deltaTime;
+
+            if (c.a < 0)
+                c.a = 0;
+
+            damageIndicator.color = c;
+        }
     }
 
     void Die()
