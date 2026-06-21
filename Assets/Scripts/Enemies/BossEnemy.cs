@@ -22,7 +22,6 @@ public class BossEnemy : BaseEnemy
     public Animator bossAnimator;
 
     private Transform player;
-
     private float lastShootTime;
     private float lastMeleeTime;
 
@@ -119,6 +118,8 @@ public class BossEnemy : BaseEnemy
     {
         if (isDead) return;
 
+        isDead = true;
+
         if (bossAnimator != null)
         {
             bossAnimator.SetBool("IsWalking", false);
@@ -127,10 +128,16 @@ public class BossEnemy : BaseEnemy
             bossAnimator.SetTrigger("Die");
         }
 
-        
+        // ✅ SAFE GAME SYSTEM UPDATE (NO ANIMATION IMPACT)
         if (GameManager.Instance != null)
-            GameManager.Instance.GameWon();
+        {
+            GameManager.Instance.AddScore(scoreValue);
+            GameManager.Instance.AddKill();
 
-        base.Die();
+            GameManager.Instance.RegisterBossKill();
+        }
+
+        // delay destroy so animation plays
+        Destroy(gameObject, 2.5f);
     }
 }

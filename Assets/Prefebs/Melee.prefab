@@ -402,7 +402,7 @@ GameObject:
   - component: {fileID: 4334440581802668733}
   - component: {fileID: 3626504140176404792}
   - component: {fileID: 3396928006454568965}
-  - component: {fileID: 4570239900523297185}
+  - component: {fileID: 6344933109329707872}
   m_Layer: 0
   m_Name: Melee
   m_TagString: Untagged
@@ -566,7 +566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba98776564ab4b45b35b74cd1298a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FollowCamera
---- !u!82 &4570239900523297185
+--- !u!82 &6344933109329707872
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -579,8 +579,8 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: cf0708f13110adb4da611622483b844e, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.2905442
-  m_Pitch: 0
+  m_Volume: 0.238
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0

@@ -30,6 +30,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text killsText;
     [SerializeField] private TMP_Text timerText;
 
+    [Header("Boss UI")]
+    [SerializeField] private TMP_Text bossMessageText;
+
+    private int bossesKilled = 0;
+    private int bossesToKill = 1;
+
     public event Action<GameState> OnStateChanged;
 
     void Awake()
@@ -57,8 +63,15 @@ public class GameManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Stage1" || scene.name == "Stage2")
+        if (scene.name == "Stage1")
         {
+            SetBossRequirement(1);
+            StartGame();
+        }
+
+        if (scene.name == "Stage2")
+        {
+            SetBossRequirement(2);
             StartGame();
         }
     }
@@ -76,13 +89,16 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        ResetGame();
+        Score = 0;
+        EnemiesKilled = 0;
+        TimeSurvived = 0f;
+
+        bossesKilled = 0;
 
         CurrentState = GameState.Playing;
         Time.timeScale = 1f;
 
         HideAllUI();
-
         UpdateHUD();
         UpdateTimerUI();
 
@@ -98,8 +114,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
 
         ShowLoseUI();
-
-        SaveSession(); // 🔥 ADD THIS
+        SaveSession();
 
         OnStateChanged?.Invoke(CurrentState);
     }
@@ -113,22 +128,47 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
 
         ShowWinUI();
-
-        SaveSession(); // 🔥 ADD THIS
+        SaveSession();
 
         OnStateChanged?.Invoke(CurrentState);
     }
 
-    void ResetGame()
-    {
-        Score = 0;
-        EnemiesKilled = 0;
-        TimeSurvived = 0f;
+    // ---------------- BOSS SYSTEM ----------------
 
-        UpdateHUD();
+    public void SetBossRequirement(int amount)
+    {
+        bossesToKill = amount;
+        bossesKilled = 0;
     }
 
-    // ---------------- SCORE SYSTEM ----------------
+    public void RegisterBossKill()
+    {
+        bossesKilled++;
+
+        if (bossesKilled >= bossesToKill)
+        {
+            GameWon();
+        }
+    }
+
+    public void ShowBossMessage(string message, float time = 3f)
+    {
+        if (bossMessageText == null) return;
+
+        bossMessageText.text = message;
+        bossMessageText.gameObject.SetActive(true);
+
+        CancelInvoke(nameof(HideBossMessage));
+        Invoke(nameof(HideBossMessage), time);
+    }
+
+    void HideBossMessage()
+    {
+        if (bossMessageText != null)
+            bossMessageText.gameObject.SetActive(false);
+    }
+
+    // ---------------- SCORE ----------------
 
     public void AddScore(int amount)
     {
@@ -142,7 +182,7 @@ public class GameManager : MonoBehaviour
         UpdateHUD();
     }
 
-    // ---------------- LEADERBOARD SAVE ----------------
+    // ---------------- LEADERBOARD ----------------
 
     void SaveSession()
     {

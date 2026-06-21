@@ -4,7 +4,7 @@ using UnityEngine;
 public class ARPlaneSpawner : MonoBehaviour
 {
     [Header("AR Plane Root")]
-    public Transform arPlane; // ONLY reference we keep
+    public Transform arPlane;
 
     [Header("Enemy Prefabs")]
     public GameObject meleeEnemy;
@@ -19,7 +19,6 @@ public class ARPlaneSpawner : MonoBehaviour
 
     [Header("Spawn Settings")]
     public float spawnInterval = 5f;
-    public int maxEnemies = 5;
 
     [Header("Spawn Heights")]
     public float meleeHeight = 1.2f;
@@ -31,7 +30,6 @@ public class ARPlaneSpawner : MonoBehaviour
     public GameObject centerPrefab;
     private GameObject spawnedCenterObject;
 
-    private List<GameObject> spawnedEnemies = new List<GameObject>();
     private List<GameObject> spawnedMedkits = new List<GameObject>();
 
     private bool bossSpawned = false;
@@ -79,25 +77,19 @@ public class ARPlaneSpawner : MonoBehaviour
     Vector3 GetCenterPosition()
     {
         return new Vector3(
-    arPlane.position.x,
-    10.97f,
-    arPlane.position.z
-
+            arPlane.position.x,
+            10.97f,
+            arPlane.position.z
         );
     }
 
-    // ---------------- ENEMIES ----------------
+    // ---------------- ENEMIES (NO LIMIT) ----------------
 
     void SpawnEnemy()
     {
         if (bossSpawned) return;
 
-        CleanupDeadEnemies();
-
-        if (spawnedEnemies.Count >= maxEnemies) return;
-
         Vector3 spawnPosition = GetRandomPointOnPlane();
-
         GameObject enemyPrefab = GetRandomEnemy();
 
         if (enemyPrefab == meleeEnemy)
@@ -105,8 +97,7 @@ public class ARPlaneSpawner : MonoBehaviour
         else if (enemyPrefab == shooterEnemy)
             spawnPosition.y += shooterHeight;
 
-        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-        spawnedEnemies.Add(enemy);
+        Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
     }
 
     // ---------------- MEDKIT ----------------
@@ -115,8 +106,6 @@ public class ARPlaneSpawner : MonoBehaviour
     {
         if (medkitPrefab == null || arPlane == null)
             return;
-
-        CleanupDeadMedkits();
 
         if (spawnedMedkits.Count >= maxMedkits)
             return;
@@ -144,11 +133,12 @@ public class ARPlaneSpawner : MonoBehaviour
         Vector3 spawnPosition = GetRandomPointOnPlane();
         spawnPosition.y += bossHeight;
 
-        GameObject boss = Instantiate(bossEnemy, spawnPosition, Quaternion.identity);
-        spawnedEnemies.Add(boss);
+        Instantiate(bossEnemy, spawnPosition, Quaternion.identity);
+
+        GameManager.Instance?.ShowBossMessage("Boss has spawned! Defeat it!");
     }
 
-    // ---------------- RANDOM POINT ----------------
+    // ---------------- RANDOM ----------------
 
     Vector3 GetRandomPointOnPlane()
     {
@@ -161,22 +151,8 @@ public class ARPlaneSpawner : MonoBehaviour
         );
     }
 
-    // ---------------- ENEMY TYPE ----------------
-
     GameObject GetRandomEnemy()
     {
         return Random.Range(0, 2) == 0 ? meleeEnemy : shooterEnemy;
-    }
-
-    // ---------------- CLEANUP ----------------
-
-    void CleanupDeadEnemies()
-    {
-        spawnedEnemies.RemoveAll(e => e == null);
-    }
-
-    void CleanupDeadMedkits()
-    {
-        spawnedMedkits.RemoveAll(m => m == null);
     }
 }

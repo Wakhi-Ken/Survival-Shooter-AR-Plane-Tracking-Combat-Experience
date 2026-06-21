@@ -3269,7 +3269,7 @@ GameObject:
   - component: {fileID: 273459681478936016}
   - component: {fileID: 5712219142833572503}
   - component: {fileID: 7524785733808729881}
-  - component: {fileID: 4147151606654600399}
+  - component: {fileID: 1880887219354008469}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -3439,7 +3439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba98776564ab4b45b35b74cd1298a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FollowCamera
---- !u!82 &4147151606654600399
+--- !u!82 &1880887219354008469
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3452,9 +3452,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: b6853954cce456d4d8a747628a4dbdbd, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.2905442
-  m_Pitch: 0
-  Loop: 1
+  m_Volume: 0.309
+  m_Pitch: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

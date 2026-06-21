@@ -1293,7 +1293,7 @@ GameObject:
   - component: {fileID: 6605829518122942074}
   - component: {fileID: 1457534065010034800}
   - component: {fileID: 4580175742330947124}
-  - component: {fileID: 5815336699643616854}
+  - component: {fileID: 3350137420316582608}
   m_Layer: 0
   m_Name: SHooter
   m_TagString: Untagged
@@ -1459,7 +1459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba98776564ab4b45b35b74cd1298a86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FollowCamera
---- !u!82 &5815336699643616854
+--- !u!82 &3350137420316582608
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1472,9 +1472,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: e4b90f283220b6d42beee3927ba936eb, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.2905442
-  m_Pitch: 0
-  Loop: 0
+  m_Volume: 0.209
+  m_Pitch: 1
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
