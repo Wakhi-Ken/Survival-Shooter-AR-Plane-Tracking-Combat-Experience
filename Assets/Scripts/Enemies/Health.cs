@@ -10,6 +10,10 @@ public class Health : MonoBehaviour
     [Header("UI")]
     public Slider healthSlider;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip impactSound;
+
     [Header("Death")]
     public PlayerAnimationController playerAnim;
     public SimpleGun gun;
@@ -38,12 +42,19 @@ public class Health : MonoBehaviour
         }
     }
 
+    void PlayImpactSound()
+    {
+        if (audioSource != null && impactSound != null)
+            audioSource.PlayOneShot(impactSound);
+    }
+
     public void TakeDamage(int damage)
     {
         if (isDead) return;
 
         currentHealth -= damage;
-        
+
+        PlayImpactSound();
 
         ShowDamageIndicator();
 
