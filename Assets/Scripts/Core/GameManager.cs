@@ -62,21 +62,30 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    // ---------------- SCENE LOAD ----------------
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Stage1" || scene.name == "Stage2")
+        if (scene.name == "Stage1")
         {
+            ResetBossSystem(1);
             StartGame();
+            Invoke(nameof(RebindBossUI), 0.1f);
+        }
+        else if (scene.name == "Stage2")
+        {
+            ResetBossSystem(2);
+            StartGame();
+            Invoke(nameof(RebindBossUI), 0.1f);
         }
     }
 
-    void Update()
+    public void RebindBossUI(TMP_Text bossText)
     {
-        if (CurrentState != GameState.Playing)
-            return;
+        bossMessageText = bossText;
 
-        TimeSurvived += Time.deltaTime;
-        UpdateTimerUI();
+        if (bossMessageText != null)
+            bossMessageText.gameObject.SetActive(false);
     }
 
     // ---------------- GAME FLOW ----------------
@@ -86,7 +95,6 @@ public class GameManager : MonoBehaviour
         Score = 0;
         EnemiesKilled = 0;
         TimeSurvived = 0f;
-        bossesKilled = 0;
 
         CurrentState = GameState.Playing;
         Time.timeScale = 1f;
@@ -128,7 +136,7 @@ public class GameManager : MonoBehaviour
 
     // ---------------- BOSS SYSTEM ----------------
 
-    public void SetBossRequirement(int amount)
+    public void ResetBossSystem(int amount)
     {
         bossesToKill = amount;
         bossesKilled = 0;
@@ -136,6 +144,9 @@ public class GameManager : MonoBehaviour
 
     public void RegisterBossKill()
     {
+        if (CurrentState != GameState.Playing)
+            return;
+
         bossesKilled++;
 
         if (bossesKilled >= bossesToKill)

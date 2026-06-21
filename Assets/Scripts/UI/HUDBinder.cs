@@ -8,11 +8,18 @@ public class HUDBinder : MonoBehaviour
     public TMP_Text killsText;
     public TMP_Text timerText;
 
+    [Header("Boss UI")]
+    public TMP_Text bossMessageText;
+
     void Start()
     {
         if (GameManager.Instance != null)
         {
+            // HUD bind
             GameManager.Instance.RebindUI(scoreText, killsText, timerText);
+
+            // Boss UI bind
+            GameManager.Instance.RebindBossUI(bossMessageText);
         }
     }
 }

@@ -1003,6 +1003,7 @@ MonoBehaviour:
   scoreText: {fileID: 1954126691}
   killsText: {fileID: 2127724302}
   timerText: {fileID: 805891238}
+  bossMessageText: {fileID: 493813547}
 --- !u!1 &672256931
 GameObject:
   m_ObjectHideFlags: 0
