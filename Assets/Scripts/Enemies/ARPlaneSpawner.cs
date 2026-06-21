@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class ARPlaneSpawner : MonoBehaviour
 {
-    [Header("Game Ground")]
-    public Transform gameGround;
+    [Header("AR Plane Root")]
+    public Transform arPlane; // ONLY reference we keep
 
     [Header("Enemy Prefabs")]
     public GameObject meleeEnemy;
@@ -27,6 +27,10 @@ public class ARPlaneSpawner : MonoBehaviour
     public float bossHeight = 1.2f;
     public float medkitHeight = 1.0f;
 
+    [Header("Center Objective")]
+    public GameObject centerPrefab;
+    private GameObject spawnedCenterObject;
+
     private List<GameObject> spawnedEnemies = new List<GameObject>();
     private List<GameObject> spawnedMedkits = new List<GameObject>();
 
@@ -38,26 +42,60 @@ public class ARPlaneSpawner : MonoBehaviour
         InvokeRepeating(nameof(SpawnMedkit), 3f, medkitSpawnInterval);
 
         Invoke(nameof(SpawnBoss), 30f);
+
+        SpawnCenterObject();
+    }
+
+    void Update()
+    {
+        LockCenterObject();
+    }
+
+    // ---------------- CENTER OBJECT ----------------
+
+    void SpawnCenterObject()
+    {
+        if (centerPrefab == null || arPlane == null)
+            return;
+
+        if (spawnedCenterObject != null)
+            return;
+
+        spawnedCenterObject = Instantiate(
+            centerPrefab,
+            GetCenterPosition(),
+            Quaternion.identity
+        );
+    }
+
+    void LockCenterObject()
+    {
+        if (spawnedCenterObject == null || arPlane == null)
+            return;
+
+        spawnedCenterObject.transform.position = GetCenterPosition();
+    }
+
+    Vector3 GetCenterPosition()
+    {
+        return new Vector3(
+            arPlane.position.x,
+            arPlane.position.y + 1f,
+            arPlane.position.z
+        );
     }
 
     // ---------------- ENEMIES ----------------
+
     void SpawnEnemy()
     {
-        if (bossSpawned)
-            return;
+        if (bossSpawned) return;
 
         CleanupDeadEnemies();
 
-        if (spawnedEnemies.Count >= maxEnemies)
-            return;
+        if (spawnedEnemies.Count >= maxEnemies) return;
 
-        if (gameGround == null)
-        {
-            Debug.LogWarning("Game Ground not assigned!");
-            return;
-        }
-
-        Vector3 spawnPosition = GetRandomPointOnGround();
+        Vector3 spawnPosition = GetRandomPointOnPlane();
 
         GameObject enemyPrefab = GetRandomEnemy();
 
@@ -66,16 +104,15 @@ public class ARPlaneSpawner : MonoBehaviour
         else if (enemyPrefab == shooterEnemy)
             spawnPosition.y += shooterHeight;
 
-        GameObject enemy =
-            Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-
+        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
         spawnedEnemies.Add(enemy);
     }
 
     // ---------------- MEDKIT ----------------
+
     void SpawnMedkit()
     {
-        if (medkitPrefab == null)
+        if (medkitPrefab == null || arPlane == null)
             return;
 
         CleanupDeadMedkits();
@@ -83,80 +120,55 @@ public class ARPlaneSpawner : MonoBehaviour
         if (spawnedMedkits.Count >= maxMedkits)
             return;
 
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-
-        if (player == null)
-            return;
-
-        Vector3 playerPos = player.transform.position;
-
-        Vector2 randomCircle =
-            Random.insideUnitCircle * medkitSpawnRadius;
+        Vector2 randomCircle = Random.insideUnitCircle * medkitSpawnRadius;
 
         Vector3 spawnPosition = new Vector3(
-            playerPos.x + randomCircle.x,
-            gameGround.position.y + medkitHeight,
-            playerPos.z + randomCircle.y
+            arPlane.position.x + randomCircle.x,
+            arPlane.position.y + medkitHeight,
+            arPlane.position.z + randomCircle.y
         );
 
-        GameObject medkit =
-            Instantiate(
-                medkitPrefab,
-                spawnPosition,
-                Quaternion.identity
-            );
-
+        GameObject medkit = Instantiate(medkitPrefab, spawnPosition, Quaternion.identity);
         spawnedMedkits.Add(medkit);
-
-        Debug.Log("🩹 Medkit spawned near player");
     }
 
     // ---------------- BOSS ----------------
+
     void SpawnBoss()
     {
-        if (bossSpawned)
-            return;
+        if (bossSpawned) return;
 
         bossSpawned = true;
 
-        Vector3 spawnPosition = GetRandomPointOnGround();
+        Vector3 spawnPosition = GetRandomPointOnPlane();
         spawnPosition.y += bossHeight;
 
-        GameObject boss =
-            Instantiate(bossEnemy, spawnPosition, Quaternion.identity);
-
+        GameObject boss = Instantiate(bossEnemy, spawnPosition, Quaternion.identity);
         spawnedEnemies.Add(boss);
     }
 
-    // ---------------- GROUND POINT ----------------
-    Vector3 GetRandomPointOnGround()
+    // ---------------- RANDOM POINT ----------------
+
+    Vector3 GetRandomPointOnPlane()
     {
-        Renderer rend = gameGround.GetComponent<Renderer>();
+        Vector2 offset = Random.insideUnitCircle * 3f;
 
-        if (rend == null)
-            return gameGround.position;
-
-        Bounds bounds = rend.bounds;
-
-        float x = Random.Range(bounds.min.x, bounds.max.x);
-        float z = Random.Range(bounds.min.z, bounds.max.z);
-
-        return new Vector3(x, bounds.max.y, z);
+        return new Vector3(
+            arPlane.position.x + offset.x,
+            arPlane.position.y,
+            arPlane.position.z + offset.y
+        );
     }
 
     // ---------------- ENEMY TYPE ----------------
+
     GameObject GetRandomEnemy()
     {
-        int r = Random.Range(0, 2);
-
-        return r switch
-        {
-            0 => meleeEnemy,
-            _ => shooterEnemy
-        };
+        return Random.Range(0, 2) == 0 ? meleeEnemy : shooterEnemy;
     }
 
     // ---------------- CLEANUP ----------------
+
     void CleanupDeadEnemies()
     {
         spawnedEnemies.RemoveAll(e => e == null);
