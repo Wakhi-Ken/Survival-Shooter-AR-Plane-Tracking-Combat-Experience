@@ -9,6 +9,10 @@ public class BaseEnemy : MonoBehaviour
 
     protected bool isDead = false;
 
+    [Header("Damage Effects")]
+    public GameObject damageEffectPrefab;
+    public Transform effectSpawnPoint;
+
     protected virtual void Start()
     {
         currentHealth = maxHealth;
@@ -17,6 +21,20 @@ public class BaseEnemy : MonoBehaviour
     public virtual void TakeDamage(int damage)
     {
         if (isDead) return;
+
+        if (damageEffectPrefab != null)
+        {
+            Vector3 spawnPos =
+                effectSpawnPoint != null ?
+                effectSpawnPoint.position :
+                transform.position + Vector3.up;
+
+            Instantiate(
+                damageEffectPrefab,
+                spawnPos,
+                Quaternion.identity
+            );
+        }
 
         currentHealth -= damage;
 

@@ -286,6 +286,37 @@ Transform:
   - {fileID: 2423497519935298399}
   m_Father: {fileID: 5765886305590163206}
   m_LocalEulerAnglesHint: {x: 7.161767, y: 0.03945999, z: 1.2496483}
+--- !u!1 &771717421994103426
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3990920930757879250}
+  m_Layer: 0
+  m_Name: EffectPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3990920930757879250
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771717421994103426}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.049, y: 0.231, z: 0.377}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1267510325167771581}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &803713274820738315
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,12 +1309,13 @@ Transform:
   m_GameObject: {fileID: 3630055484925912235}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 6.3989, y: -7.4719434, z: 1.3897401}
+  m_LocalPosition: {x: 6.3989, y: -6.515, z: 1.3897401}
   m_LocalScale: {x: 1.9016, y: 1.9016, z: 1.9016}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8812098884141345444}
   - {fileID: 2954999946933172193}
+  - {fileID: 3990920930757879250}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &7959129149779911251
@@ -1405,6 +1437,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShooterEnemy
   maxHealth: 100
   scoreValue: 10
+  damageEffectPrefab: {fileID: 7226583673155636401, guid: a2ab56839e1c9504ea9d141e95d0b16b, type: 3}
+  effectSpawnPoint: {fileID: 3990920930757879250}
   moveSpeed: 0.76
   stopDistance: 10
   fireRate: 1.2

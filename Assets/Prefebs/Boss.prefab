@@ -1311,6 +1311,37 @@ Transform:
   - {fileID: 1744616866622001974}
   m_Father: {fileID: 1058501739055434308}
   m_LocalEulerAnglesHint: {x: -20.764116, y: 10.51475, z: -0.82802546}
+--- !u!1 &3777228775314758469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6029550108881575331}
+  m_Layer: 0
+  m_Name: effectPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6029550108881575331
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3777228775314758469}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.016, y: 0.38, z: 0.474}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1995211549845590066}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3818183341510650402
 GameObject:
   m_ObjectHideFlags: 0
@@ -3254,12 +3285,13 @@ Transform:
   m_GameObject: {fileID: 8858921222029568126}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 6.8951716, y: -5.886, z: -9.26}
+  m_LocalPosition: {x: 3.18, y: -5.844, z: 0.5405676}
   m_LocalScale: {x: 1.6541, y: 1.6541, z: 1.6541}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6005059118237086141}
   - {fileID: 4157159582246837937}
+  - {fileID: 6029550108881575331}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &1396300279389209534
@@ -3383,9 +3415,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
   maxHealth: 100
   scoreValue: 10
+  damageEffectPrefab: {fileID: 8443315704496310910, guid: 6ef35fa36e3a65043b2d800600204bdd, type: 3}
+  effectSpawnPoint: {fileID: 6029550108881575331}
   moveSpeed: 0.82
   meleeRange: 30
-  shootRange: 8
   meleeDamage: 25
   meleeCooldown: 2
   bulletPrefab: {fileID: 5622383220869598623, guid: 6626da29f52057744946d844839b0b52, type: 3}
