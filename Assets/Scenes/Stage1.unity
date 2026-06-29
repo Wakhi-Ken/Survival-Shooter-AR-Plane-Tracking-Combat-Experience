@@ -5170,42 +5170,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 70819919}
     m_Modifications:
-    - target: {fileID: 1336821795899554039, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027652069474405, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 114.8319
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027652069474405, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 107.7216
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027652069474405, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 83.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027652069474405, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 103.38
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027653997757343, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027653997757343, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027653997757343, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6563027653997757343, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8340564951553703330, guid: 7bab4bd8b96ea0042ac5e4d1c9a38c16, type: 3}
       propertyPath: m_Name
       value: JoyCanvas
