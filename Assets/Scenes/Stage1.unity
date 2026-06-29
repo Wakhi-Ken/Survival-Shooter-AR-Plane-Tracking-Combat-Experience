@@ -2762,6 +2762,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7338830103400962954, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7576540232969393430, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2773,6 +2777,10 @@ PrefabInstance:
     - target: {fileID: 8156016600326893558, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
       propertyPath: m_Name
       value: SFXSlider
+      objectReference: {fileID: 0}
+    - target: {fileID: 8417596896537663614, guid: 525a85921aa9d454e8a190579cfc975e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 174
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5060,12 +5068,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c631039739a1c24f84015fb733f64c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  joystick: {fileID: 0}
-  cameraTransform: {fileID: 37812069}
-  moveSpeed: 2
-  rotationSpeed: 8
-  controller: {fileID: 0}
-  animator: {fileID: 0}
 --- !u!4 &1852576805695106520 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1852576806548013000, guid: 2a844126a9104c24590626bade589ac9, type: 3}
