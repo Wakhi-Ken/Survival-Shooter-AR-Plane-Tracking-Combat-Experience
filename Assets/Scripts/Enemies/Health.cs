@@ -122,7 +122,7 @@ public class Health : MonoBehaviour
         if (gun != null)
             gun.enabled = false;
 
-        // IMPORTANT: do NOT disable object yet
+       
         Invoke(nameof(TriggerGameOver), 2f);
     }
 

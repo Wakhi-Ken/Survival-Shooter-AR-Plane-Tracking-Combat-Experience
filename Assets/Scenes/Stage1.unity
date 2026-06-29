@@ -1667,7 +1667,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 0}
+  m_AnchoredPosition: {x: -0.000061035156, y: 0}
   m_SizeDelta: {x: 127.79907, y: 123.686646}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1054658228
@@ -2589,6 +2589,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -7
       objectReference: {fileID: 0}
+    - target: {fileID: 9216303619165977617, guid: 5ff789b7cb34a0e40864fa1847c0ed21, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 672256933}
+    - target: {fileID: 9216303619165977617, guid: 5ff789b7cb34a0e40864fa1847c0ed21, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ReturnToMainMenu
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7747691092335566439, guid: 5ff789b7cb34a0e40864fa1847c0ed21, type: 3}
@@ -2819,6 +2827,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac602583aabaecb44ba81cec726f7032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ARPlaneSpawner
+  planeManager: {fileID: 196459421}
+  raycastManager: {fileID: 196459420}
   arPlane: {fileID: 4266372707468888, guid: 679429d177242dd4591842d673d9d191, type: 3}
   meleeEnemy: {fileID: 988745025075595671, guid: 5c3f0886e4afa264d9c99e60b82aca11, type: 3}
   shooterEnemy: {fileID: 3630055484925912235, guid: cfd5ac95e62444a4b8c39f4cdd8d3685, type: 3}

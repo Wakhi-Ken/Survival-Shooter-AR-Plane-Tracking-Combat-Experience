@@ -6,12 +6,12 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    // ---------------- SAVE KEYS ----------------
+    // SAVE KEYS 
     private const string MENU_VOLUME_KEY = "MenuVolume";
     private const string GAME_VOLUME_KEY = "GameVolume";
     private const string SFX_VOLUME_KEY = "SFXVolume";
 
-    // ---------------- MUSIC ----------------
+    // MUSIC
     [Header("Menu Music")]
     public AudioSource menuMusicSource;
     public AudioClip[] menuMusicClips;
@@ -20,7 +20,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource gameMusicSource;
     public AudioClip[] gameMusicClips;
 
-    // ---------------- SFX ----------------
+    //  SFX 
     [Header("SFX")]
     public AudioSource[] sfxSources;
     public Sound[] sfxSounds;
@@ -28,13 +28,13 @@ public class AudioManager : MonoBehaviour
     private Dictionary<string, Sound> sfxDictionary = new Dictionary<string, Sound>();
     private int sfxIndex = 0;
 
-    // ---------------- SLIDERS ----------------
+    // SLIDERS 
     [Header("Sliders")]
     public Slider menuSlider;
     public Slider gameSlider;
     public Slider sfxSlider;
 
-    // ---------------- VOLUMES ----------------
+    // VOLUMES 
     public float menuVolume = 1f;
     public float gameVolume = 1f;
     public float sfxVolume = 1f;
@@ -44,11 +44,11 @@ public class AudioManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
             return;
         }
 
@@ -67,7 +67,7 @@ public class AudioManager : MonoBehaviour
         ApplyVolumes();
     }
 
-    // ---------------- DICTIONARY ----------------
+    //  DICTIONARY 
     void BuildDictionary()
     {
         sfxDictionary.Clear();
@@ -81,7 +81,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // ---------------- SLIDERS ----------------
+    // SLIDERS 
     void BindSliders()
     {
         if (menuSlider != null)
@@ -103,7 +103,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // ---------------- APPLY VOLUME ----------------
+    // APPLY VOLUME 
     void ApplyVolumes()
     {
         if (menuMusicSource) menuMusicSource.volume = menuVolume;
@@ -117,7 +117,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // ---------------- MUSIC ----------------
+    //  MUSIC 
     public void PlayMenuMusic(int index)
     {
         if (menuMusicSource == null || index >= menuMusicClips.Length) return;
@@ -136,7 +136,7 @@ public class AudioManager : MonoBehaviour
         gameMusicSource.Play();
     }
 
-    // ---------------- SFX ----------------
+    //  SFX 
     public void PlaySFX(string name)
     {
         if (!sfxDictionary.TryGetValue(name, out Sound s)) return;
@@ -149,7 +149,7 @@ public class AudioManager : MonoBehaviour
         sfxIndex = (sfxIndex + 1) % sfxSources.Length;
     }
 
-    // ---------------- SLIDERS ----------------
+    //  SLIDERS 
     public void SetMenuVolume(float v)
     {
         menuVolume = v;
@@ -168,7 +168,7 @@ public class AudioManager : MonoBehaviour
         SaveVolumes();
     }
 
-    // ---------------- SAVE ----------------
+    // SAVE
     void SaveVolumes()
     {
         PlayerPrefs.SetFloat(MENU_VOLUME_KEY, menuVolume);

@@ -14,7 +14,7 @@ public class LeaderboardManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             Load();
         }
         else
@@ -23,7 +23,7 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
-    // ---------------- ADD NEW RUN ----------------
+    // ADD NEW RUN 
     public void AddSession(float time, int kills, int score)
     {
         SessionData data = new SessionData
@@ -42,7 +42,7 @@ public class LeaderboardManager : MonoBehaviour
         Save();
     }
 
-    // ---------------- SAVE ----------------
+    // SAVE 
     void Save()
     {
         string json = JsonUtility.ToJson(new Wrapper(sessions));
@@ -50,7 +50,7 @@ public class LeaderboardManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // ---------------- LOAD ----------------
+    // LOAD 
     void Load()
     {
         if (!PlayerPrefs.HasKey(SAVE_KEY))

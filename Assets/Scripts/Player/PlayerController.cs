@@ -48,7 +48,7 @@ public class PlayerAnimationController : MonoBehaviour
             animator.SetTrigger("Reload");
     }
 
-    // 🔥 ADD THIS
+    
     public void PlayDie()
     {
         if (animator != null)
@@ -58,7 +58,7 @@ public class PlayerAnimationController : MonoBehaviour
             animator.SetTrigger("Die");
         }
 
-        // optional: detach weapon on death
+        
         if (currentWeapon != null)
         {
             Destroy(currentWeapon);

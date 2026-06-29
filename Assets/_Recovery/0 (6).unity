@@ -119,79 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &352402544
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 694420223533235083, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: sfxSlider
-      value: 
-      objectReference: {fileID: 1134796317}
-    - target: {fileID: 694420223533235083, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: gameSlider
-      value: 
-      objectReference: {fileID: 2078722090}
-    - target: {fileID: 694420223533235083, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: menuSlider
-      value: 
-      objectReference: {fileID: 1830470082}
-    - target: {fileID: 694420223533235083, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: menuMusicSource
-      value: 
-      objectReference: {fileID: 1710074979}
-    - target: {fileID: 4314229390296658031, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_Name
-      value: Gameworld Audio
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.49895
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -4.5656
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -41.41543
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7481713276024991889, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a8c712f86ff1acd4183d6459d54065c2, type: 3}
 --- !u!1 &807113110
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,22 +256,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1134796317 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3091852395487083258, guid: 301da5d50766a8c4fa1fcf84e1151320, type: 3}
-  m_PrefabInstance: {fileID: 103394033880462189}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
---- !u!82 &1710074979 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 1022507627729444073, guid: 301da5d50766a8c4fa1fcf84e1151320, type: 3}
-  m_PrefabInstance: {fileID: 103394033880462189}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1715796010
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,28 +462,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!114 &1830470082 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2807947406297056031, guid: 301da5d50766a8c4fa1fcf84e1151320, type: 3}
-  m_PrefabInstance: {fileID: 103394033880462189}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
---- !u!114 &2078722090 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3375633251542684886, guid: 301da5d50766a8c4fa1fcf84e1151320, type: 3}
-  m_PrefabInstance: {fileID: 103394033880462189}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &103394033880462189
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -678,4 +567,3 @@ SceneRoots:
   - {fileID: 1716414947}
   - {fileID: 103394033880462189}
   - {fileID: 1715796013}
-  - {fileID: 352402544}

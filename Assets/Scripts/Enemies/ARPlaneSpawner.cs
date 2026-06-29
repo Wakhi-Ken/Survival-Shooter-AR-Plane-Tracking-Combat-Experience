@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public class ARPlaneSpawner : MonoBehaviour
 {
+    [Header("AR")]
+    [SerializeField] private ARPlaneManager planeManager;
+    [SerializeField] private ARRaycastManager raycastManager;
+
     [Header("AR Plane Root")]
     public Transform arPlane;
 
@@ -18,7 +23,7 @@ public class ARPlaneSpawner : MonoBehaviour
     public int maxMedkits = 3;
 
     [Header("Enemy Spawn Settings")]
-    public float spawnInterval = 1.5f; // Faster spawning
+    public float spawnInterval = 1.5f;
 
     [Header("Spawn Heights")]
     public float meleeHeight = 1.2f;
@@ -33,24 +38,90 @@ public class ARPlaneSpawner : MonoBehaviour
     private readonly List<GameObject> spawnedMedkits = new();
 
     private bool bossSpawned = false;
+    private bool worldSpawned = false;
 
-    void Start()
+    private void Start()
     {
+        if (planeManager != null)
+        {
+            planeManager.planesChanged += OnPlanesChanged;
+        }
+        else
+        {
+            Debug.LogError("ARPlaneManager is not assigned.");
+        }
+    }
+
+    private void Update()
+    {
+        if (!worldSpawned)
+            return;
+
+        LockCenterObject();
+    }
+
+    private void OnDestroy()
+    {
+        if (planeManager != null)
+        {
+            planeManager.planesChanged -= OnPlanesChanged;
+        }
+    }
+
+    // PLANE DETECTION
+
+
+    private void OnPlanesChanged(ARPlanesChangedEventArgs args)
+    {
+        if (worldSpawned)
+            return;
+
+        if (args.added.Count == 0)
+            return;
+
+        ARPlane detectedPlane = args.added[0];
+
+        arPlane = detectedPlane.transform;
+
+        SpawnGameWorld();
+    }
+
+    private void SpawnGameWorld()
+    {
+        worldSpawned = true;
+
         SpawnCenterObject();
 
         InvokeRepeating(nameof(SpawnEnemy), 2f, spawnInterval);
         InvokeRepeating(nameof(SpawnMedkit), 3f, medkitSpawnInterval);
         Invoke(nameof(SpawnBoss), 30f);
+
+        LockPlaneDetection();
+
+        Debug.Log("Game world spawned.");
     }
 
-    void Update()
+    private void LockPlaneDetection()
     {
-        LockCenterObject();
+        if (planeManager == null)
+            return;
+
+        foreach (ARPlane plane in planeManager.trackables)
+        {
+            plane.gameObject.SetActive(false);
+        }
+
+        planeManager.enabled = false;
+
+        if (raycastManager != null)
+            raycastManager.enabled = false;
     }
 
-    // ---------------- CENTER OBJECT ----------------
 
-    void SpawnCenterObject()
+    // CENTER OBJECT
+ 
+
+    private void SpawnCenterObject()
     {
         if (centerPrefab == null || arPlane == null)
             return;
@@ -65,7 +136,7 @@ public class ARPlaneSpawner : MonoBehaviour
         );
     }
 
-    void LockCenterObject()
+    private void LockCenterObject()
     {
         if (spawnedCenterObject == null || arPlane == null)
             return;
@@ -73,7 +144,7 @@ public class ARPlaneSpawner : MonoBehaviour
         spawnedCenterObject.transform.position = GetCenterPosition();
     }
 
-    Vector3 GetCenterPosition()
+    private Vector3 GetCenterPosition()
     {
         return new Vector3(
             arPlane.position.x,
@@ -82,10 +153,14 @@ public class ARPlaneSpawner : MonoBehaviour
         );
     }
 
-    // ---------------- ENEMIES ----------------
+    // ENEMIES
 
-    void SpawnEnemy()
+
+    private void SpawnEnemy()
     {
+        if (!worldSpawned)
+            return;
+
         if (GameManager.Instance != null &&
             GameManager.Instance.CurrentState != GameState.Playing)
             return;
@@ -98,16 +173,21 @@ public class ARPlaneSpawner : MonoBehaviour
 
         if (enemyPrefab == meleeEnemy)
             spawnPosition.y += meleeHeight;
-        else if (enemyPrefab == shooterEnemy)
+        else
             spawnPosition.y += shooterHeight;
 
         Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
     }
 
-    // ---------------- MEDKITS ----------------
 
-    void SpawnMedkit()
+    // MEDKITS
+
+
+    private void SpawnMedkit()
     {
+        if (!worldSpawned)
+            return;
+
         if (GameManager.Instance != null &&
             GameManager.Instance.CurrentState != GameState.Playing)
             return;
@@ -137,11 +217,13 @@ public class ARPlaneSpawner : MonoBehaviour
         spawnedMedkits.Add(medkit);
     }
 
-    // ---------------- BOSS ----------------
 
-    void SpawnBoss()
+    // BOSS
+
+
+    private void SpawnBoss()
     {
-        if (bossSpawned)
+        if (!worldSpawned || bossSpawned)
             return;
 
         if (GameManager.Instance != null &&
@@ -168,9 +250,11 @@ public class ARPlaneSpawner : MonoBehaviour
         }
     }
 
-    // ---------------- RANDOM ----------------
+    
+    // RANDOM
+    
 
-    Vector3 GetRandomPointOnPlane()
+    private Vector3 GetRandomPointOnPlane()
     {
         Vector2 offset = Random.insideUnitCircle * 3f;
 
@@ -181,7 +265,7 @@ public class ARPlaneSpawner : MonoBehaviour
         );
     }
 
-    GameObject GetRandomEnemy()
+    private GameObject GetRandomEnemy()
     {
         return Random.Range(0, 2) == 0
             ? meleeEnemy

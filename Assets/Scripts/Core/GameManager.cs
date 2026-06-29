@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
         UpdateTimerUI();
     }
 
-    // ---------------- SCENE LOAD ----------------
+    //  SCENE LOAD 
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ---------------- HUD BINDING ----------------
+    // HUD BINDING 
 
     public void RebindUI(TMP_Text score, TMP_Text kills, TMP_Text timer)
     {
@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
             bossMessageText.gameObject.SetActive(false);
     }
 
-    // ---------------- GAME FLOW ----------------
+    // GAME FLOW 
 
     public void StartGame()
     {
@@ -155,7 +155,7 @@ public class GameManager : MonoBehaviour
         OnStateChanged?.Invoke(CurrentState);
     }
 
-    // ---------------- SCORE ----------------
+    // SCORE
 
     public void AddScore(int amount)
     {
@@ -169,7 +169,7 @@ public class GameManager : MonoBehaviour
         UpdateHUD();
     }
 
-    // ---------------- BOSS SYSTEM ----------------
+    // BOSS SYSTEM
 
     public void ResetBossSystem(int amount)
     {
@@ -208,7 +208,7 @@ public class GameManager : MonoBehaviour
             bossMessageText.gameObject.SetActive(false);
     }
 
-    // ---------------- LEADERBOARD ----------------
+    // LEADERBOARD 
 
     private void SaveSession()
     {
@@ -222,7 +222,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ---------------- UI ----------------
+    // UI 
 
     private void UpdateHUD()
     {

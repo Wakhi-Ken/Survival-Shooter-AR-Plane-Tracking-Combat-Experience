@@ -53,7 +53,7 @@ public class BossEnemy : BaseEnemy
         }
     }
 
-    // ---------------- MOVE ----------------
+    //  MOVE 
     void Move()
     {
         if (isDead) return;
@@ -68,7 +68,7 @@ public class BossEnemy : BaseEnemy
         );
     }
 
-    // ---------------- SHOOT ----------------
+    //  SHOOT 
     void Shoot()
     {
         if (Time.time < lastShootTime + shootCooldown)
@@ -96,7 +96,7 @@ public class BossEnemy : BaseEnemy
             rb.linearVelocity = direction * bulletSpeed;
     }
 
-    // ---------------- MELEE ----------------
+    //  MELEE 
     void Melee()
     {
         if (Time.time < lastMeleeTime + meleeCooldown)
@@ -113,7 +113,7 @@ public class BossEnemy : BaseEnemy
             playerHealth.TakeDamage(meleeDamage);
     }
 
-    // ---------------- DEATH ----------------
+    //  DEATH 
     protected override void Die()
     {
         if (isDead) return;
@@ -128,7 +128,7 @@ public class BossEnemy : BaseEnemy
             bossAnimator.SetTrigger("Die");
         }
 
-        // ✅ SAFE GAME SYSTEM UPDATE (NO ANIMATION IMPACT)
+        
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(scoreValue);
